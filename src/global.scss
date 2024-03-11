@@ -1,0 +1,14 @@
+@use "node_modules/modern-normalize/modern-normalize.css";
+@use "./variables";
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;700&display=swap");
+
+html,
+body {
+	font-family: "Instrument Sans", sans-serif;
+	line-height: 150%;
+	color: variables.$dark-grey;
+}
+
+p {
+	margin: 0;
+}
