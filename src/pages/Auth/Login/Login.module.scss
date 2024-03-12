@@ -1,0 +1,48 @@
+@use "../../../variables";
+
+.login_page {
+	display: flex;
+	flex-direction: column;
+	padding-top: 3rem;
+	padding-bottom: 3rem;
+
+	section {
+		margin-bottom: 1rem;
+
+		p {
+			color: variables.$grey;
+		}
+
+		@media (min-width: variables.$breakpoint-tablet) {
+			h2 {
+				font-size: 2rem;
+			}
+		}
+	}
+
+	form {
+		display: flex;
+		flex-direction: column;
+		row-gap: 1.5rem;
+
+		button {
+			margin-top: 0.5rem;
+		}
+	}
+
+	section:last-of-type {
+		text-align: center;
+		margin-top: 1.5rem;
+		a {
+			text-decoration: none;
+			color: variables.$purple;
+		}
+	}
+
+	@media (min-width: variables.$breakpoint-tablet) {
+		border: 1px solid variables.$dark-grey;
+		border-radius: 8px;
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
+}
