@@ -1,0 +1,33 @@
+@use "../../variables";
+
+.create_links_card {
+	background-color: variables.$light-grey;
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	row-gap: 1rem;
+	padding: 1.5rem 1rem;
+
+	div:first-of-type {
+		display: flex;
+		justify-content: space-between;
+		text-transform: capitalize;
+		color: variables.$grey;
+
+		span {
+			font-weight: 700;
+		}
+
+		button {
+			text-transform: capitalize;
+			color: inherit;
+			border: none;
+			background-color: inherit;
+			cursor: pointer;
+		}
+	}
+
+	&__textfields {
+		background-color: variables.$white;
+	}
+}
