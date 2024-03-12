@@ -15,7 +15,7 @@ interface TextFieldProps {
 	inputContainerClassName?: string;
 }
 
-const TextField = forwardRef<HTMLInputElement>(
+const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 	(
 		{
 			error,
@@ -28,7 +28,7 @@ const TextField = forwardRef<HTMLInputElement>(
 			labelClassName,
 			inputContainerClassName,
 			...props
-		}: TextFieldProps,
+		},
 		ref
 	) => {
 		return (
