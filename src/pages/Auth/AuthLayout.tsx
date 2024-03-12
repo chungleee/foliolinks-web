@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import styles from "./layout.module.scss";
+import styles from "./AuthLayout.module.scss";
 import LogoBanner from "../../components/common/LogoBanner/LogoBanner";
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
