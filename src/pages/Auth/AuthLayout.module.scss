@@ -1,0 +1,28 @@
+@use "../../variables";
+
+.auth_layout {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+	padding: 2rem 1.5rem;
+	height: 100dvh;
+
+	main {
+		margin: auto 0;
+	}
+
+	@media (min-width: variables.$breakpoint-tablet) {
+		width: 70%;
+		margin: 0 auto;
+
+		.logo_banner {
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+
+	@media (min-width: variables.$breakpoint-desktop) {
+		width: 30%;
+	}
+}
