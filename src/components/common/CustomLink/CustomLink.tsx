@@ -11,16 +11,16 @@ interface CustomLinkProps {
 const CustomLink = ({ href, isActive, children }: CustomLinkProps) => {
 	return (
 		<NavLink
-			className={(isActive) => {
-				return isActive
-					? `${styles.custom_link} ${styles.active_link}`
-					: `${styles.custom_link}`;
-			}}
-			// className={
-			// 	isActive
+			// className={(isActive) => {
+			// 	return isActive
 			// 		? `${styles.custom_link} ${styles.active_link}`
 			// 		: `${styles.custom_link}`;
-			// }
+			// }}
+			className={
+				isActive
+					? `${styles.custom_link} ${styles.active_link}`
+					: `${styles.custom_link}`
+			}
 			to={href}
 		>
 			{children}
