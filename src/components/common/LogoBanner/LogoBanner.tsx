@@ -14,12 +14,14 @@ interface LogoBannerProps {
 }
 
 const LogoBanner = ({ logoTextClassName }: LogoBannerProps) => {
-	<div className={styles.logo}>
-		<Logo />
-		<span className={`${styles.logo__text} ${logoTextClassName}`}>
-			foliolinks
-		</span>
-	</div>;
+	return (
+		<div className={styles.logo}>
+			<Logo />
+			<span className={`${styles.logo__text} ${logoTextClassName}`}>
+				foliolinks
+			</span>
+		</div>
+	);
 };
 
 export default LogoBanner;
