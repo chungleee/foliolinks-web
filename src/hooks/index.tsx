@@ -16,5 +16,5 @@ export const useAuth = () => {
 		}
 	}, []);
 
-	return { user };
+	return { user } as const;
 };

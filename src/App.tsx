@@ -1,7 +1,7 @@
 import { useAuth } from "./hooks";
 
 function App() {
-	useAuth();
+	const user = useAuth();
 
 	return (
 		<>
