@@ -7,8 +7,10 @@ import AddLinks from "./pages/Dashboard/AddLinks/AddLinks.tsx";
 import Login from "./pages/Auth/Login/Login.tsx";
 import Register from "./pages/Auth/Register/Register.tsx";
 import Profile from "./pages/Dashboard/Profile/Profile.tsx";
+import NotFound from "./pages/NotFound.tsx";
 
 const router = createBrowserRouter([
+	{ path: "*", element: <NotFound /> },
 	{
 		path: "/",
 		element: <App />,
