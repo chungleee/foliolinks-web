@@ -1,0 +1,128 @@
+@use "../../../variables";
+
+.profile {
+	padding: 1.5rem;
+
+	@media (min-width: variables.$breakpoint-tablet) {
+		padding: 3rem;
+	}
+
+	&__intro {
+		p {
+			color: variables.$grey;
+		}
+	}
+
+	&__form_section {
+		display: flex;
+		flex-direction: column;
+		row-gap: 1.5rem;
+
+		@mixin form-container {
+			background-color: variables.$light-grey;
+			display: flex;
+			flex-direction: column;
+			padding: 1.25rem;
+			border-radius: 8px;
+		}
+
+		&__image_upload {
+			@include form-container();
+			display: flex;
+			flex-direction: column;
+			row-gap: 1rem;
+
+			> div {
+				display: flex;
+				flex-direction: column;
+				row-gap: 1rem;
+			}
+
+			input[type="file"] {
+				display: none;
+			}
+
+			label {
+				align-items: center;
+				background-color: variables.$purple-light;
+				background-size: cover;
+				background-repeat: no-repeat;
+				background-position: center center;
+				border-radius: 8px;
+				color: variables.$purple;
+				cursor: pointer;
+				display: flex;
+				flex-direction: column;
+				font-size: 1.25rem;
+				font-weight: 700;
+				height: 200px;
+				justify-content: center;
+				row-gap: 0.5rem;
+				width: 200px;
+			}
+
+			.uploaded_img_text {
+				color: variables.$white;
+			}
+
+			@media (min-width: variables.$breakpoint-tablet) {
+				flex-direction: row;
+				align-items: center;
+
+				> p {
+					flex: 50%;
+				}
+
+				> div {
+					flex: 50%;
+					flex-direction: row;
+					align-items: center;
+
+					small {
+						margin: auto;
+						width: 25%;
+						word-wrap: break-word;
+					}
+				}
+			}
+		}
+
+		&__personal_deets {
+			@include form-container();
+			row-gap: 1rem;
+
+			.textfields {
+				background-color: variables.$white;
+			}
+
+			.textfields_layout {
+				@media (min-width: variables.$breakpoint-tablet) {
+					display: flex;
+					align-items: center;
+
+					> div {
+						width: 50%;
+						margin-left: auto;
+					}
+				}
+			}
+		}
+	}
+
+	.save_button {
+		border-top: 1px solid variables.$med-grey;
+		padding-top: 1.5rem;
+		padding-left: 1.5rem;
+		padding-right: 1.5rem;
+		margin-left: -1.5rem;
+		margin-right: -1.5rem;
+
+		button {
+			width: 100%;
+		}
+	}
+}
+
+.error {
+	color: variables.$red;
+}
