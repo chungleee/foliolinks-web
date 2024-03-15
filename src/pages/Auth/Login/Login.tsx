@@ -20,27 +20,28 @@ const Login: FunctionComponent = () => {
 	});
 
 	const onLoginSubmit = async (data: TLoginFormInputs) => {
+		setIsPending(true);
+		try {
+			let url = "https://foliolinks-api.leonchung.ca";
+
+			const result = await fetch(`${url}/api/users/auth/login`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(data),
+				credentials: "include",
+			});
+
+			// TODO: set user object somewhere in state
+			const json = await result.json();
+
+			console.log(json);
+		} catch (error) {
+			console.log(error);
+			setIsPending(false);
+		} finally {
+			setIsPending(false);
+		}
 		console.log("submitted data: ", data);
-		// try {
-		// 	let url =
-		// 		process.env.NODE_ENV === "production"
-		// 			? process.env.NEXT_PUBLIC_PRODUCTION_SERVER
-		// 			: process.env.NEXT_PUBLIC_SERVER;
-
-		// 	const result = await fetch(`${url}/api/users/auth/login`, {
-		// 		method: "POST",
-		// 		headers: { "Content-Type": "application/json" },
-		// 		body: JSON.stringify(data),
-		// 		credentials: "include",
-		// 	});
-
-		// 	// TODO: set user object somewhere in state
-		// 	const json = await result.json();
-
-		// 	console.log(json);
-		// } catch (error) {
-		// 	console.log(error);
-		// }
 	};
 
 	return (
