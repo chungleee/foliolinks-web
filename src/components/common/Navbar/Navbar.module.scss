@@ -1,0 +1,52 @@
+@use "../../../variables";
+
+.navbar {
+	padding: 1rem 1.5rem;
+
+	div {
+		display: flex;
+		font-weight: 700;
+		justify-content: space-between;
+		align-items: stretch;
+
+		.left_logo {
+			margin-right: auto;
+		}
+
+		.right_logo {
+			margin-left: auto;
+			border-radius: 8px;
+			border: 1px solid variables.$purple;
+			display: flex;
+			align-items: center;
+
+			p {
+				display: none;
+			}
+
+			@media (min-width: variables.$breakpoint-tablet) {
+				svg {
+					display: none;
+				}
+
+				p {
+					display: block;
+					color: variables.$purple;
+					text-transform: capitalize;
+				}
+			}
+		}
+
+		.navbar_logos {
+			padding: 0.75rem 1rem;
+		}
+	}
+}
+
+.customlink_name {
+	display: none;
+
+	@media (min-width: variables.$breakpoint-tablet) {
+		display: block;
+	}
+}

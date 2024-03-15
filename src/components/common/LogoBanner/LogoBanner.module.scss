@@ -1,0 +1,25 @@
+@use "../../../variables";
+
+.logo {
+	display: flex;
+	align-items: center;
+	column-gap: 0.5rem;
+
+	&__icon {
+		background-color: variables.$purple;
+		color: variables.$white;
+		padding: 0.25rem;
+		border-radius: 8px;
+		display: flex;
+	}
+
+	&__text {
+		display: none;
+		font-weight: 700;
+		font-size: 2rem;
+
+		@media (min-width: variables.$breakpoint-tablet) {
+			display: block;
+		}
+	}
+}
