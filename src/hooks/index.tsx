@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 export const useAuth = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	const refreshAccessToken = async () => {
 		try {
@@ -19,6 +20,8 @@ export const useAuth = () => {
 			console.log("refresh json: ", json);
 			if (json?.status === 400) {
 				throw Error(json.name);
+			} else {
+				navigate(location.pathname);
 			}
 		} catch (error) {
 			console.log("refresh error: ", error);
