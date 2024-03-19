@@ -8,6 +8,7 @@ import Login from "./pages/Auth/Login/Login.tsx";
 import Register from "./pages/Auth/Register/Register.tsx";
 import Profile from "./pages/Dashboard/Profile/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
 	{ path: "*", element: <NotFound /> },
@@ -15,8 +16,22 @@ const router = createBrowserRouter([
 		path: "/",
 		element: <App />,
 	},
-	{ path: "/dashboard", element: <AddLinks /> },
-	{ path: "/dashboard/profile", element: <Profile /> },
+	{
+		path: "/dashboard",
+		element: (
+			<ProtectedRoute>
+				<AddLinks />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: "/dashboard/profile",
+		element: (
+			<ProtectedRoute>
+				<Profile />
+			</ProtectedRoute>
+		),
+	},
 	{ path: "/login", element: <Login /> },
 	{ path: "/register", element: <Register /> },
 ]);
