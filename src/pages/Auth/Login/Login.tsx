@@ -31,17 +31,16 @@ const Login: FunctionComponent = () => {
 				credentials: "include",
 			});
 
-			// TODO: set user object somewhere in state
 			const json = await result.json();
+			const { access_token } = json;
 
-			console.log(json);
+			localStorage.setItem("foliolinks_access_token", access_token);
 		} catch (error) {
 			console.log(error);
 			setIsPending(false);
 		} finally {
 			setIsPending(false);
 		}
-		console.log("submitted data: ", data);
 	};
 
 	return (
