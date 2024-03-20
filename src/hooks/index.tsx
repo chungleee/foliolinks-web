@@ -40,8 +40,6 @@ export const useAuth = () => {
 			const { exp } = jwtDecode(access_token) as { exp: number };
 			const expiryDate = new Date(exp * 1000);
 			const currentDate = new Date();
-			console.log("expiryDate: ", expiryDate);
-			console.log("current: ", new Date());
 
 			const isExpired = currentDate > expiryDate;
 
