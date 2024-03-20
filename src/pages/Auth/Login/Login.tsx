@@ -36,7 +36,7 @@ const Login: FunctionComponent = () => {
 			const { access_token } = json;
 
 			localStorage.setItem("foliolinks_access_token", access_token);
-			navigate("/dashboard");
+			// navigate("/dashboard");
 		} catch (error) {
 			console.log(error);
 			setIsPending(false);
