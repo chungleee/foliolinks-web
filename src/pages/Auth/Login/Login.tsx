@@ -9,7 +9,7 @@ import Button from "../../../components/common/Button/Button";
 import AuthLayout from "../AuthLayout";
 
 const Login: FunctionComponent = () => {
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const [isPending, setIsPending] = useState(false);
 
 	const {
