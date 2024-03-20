@@ -2,13 +2,14 @@ import styles from "./Login.module.scss";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FunctionComponent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TLoginFormInputs, loginSchema } from "../model";
 import TextField from "../../../components/common/TextField/TextField";
 import Button from "../../../components/common/Button/Button";
 import AuthLayout from "../AuthLayout";
 
 const Login: FunctionComponent = () => {
+	const navigate = useNavigate();
 	const [isPending, setIsPending] = useState(false);
 
 	const {
@@ -35,6 +36,7 @@ const Login: FunctionComponent = () => {
 			const { access_token } = json;
 
 			localStorage.setItem("foliolinks_access_token", access_token);
+			navigate("/dashboard");
 		} catch (error) {
 			console.log(error);
 			setIsPending(false);
