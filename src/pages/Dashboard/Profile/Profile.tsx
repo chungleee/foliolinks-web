@@ -21,8 +21,16 @@ const Profile = () => {
 		mode: "onSubmit",
 	});
 
-	const handleSave = (data: TProfileFormValues) => {
+	const handleSave = async (data: TProfileFormValues) => {
 		console.log("form data: ", data);
+		try {
+			const result = await fetch(`${import.meta.env.VITE_PROD_URL}/api/`);
+			const json = await result.json();
+
+			console.log("json: ", json);
+		} catch (error) {
+			console.error("save error: ", error);
+		}
 	};
 
 	useEffect(() => {
