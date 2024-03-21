@@ -19,7 +19,7 @@ const Register = () => {
 		resolver: zodResolver(registerSchema),
 	});
 
-	const onFormSubmit = async (data: TRegisterFormInputs) => {
+	const onRegisterSubmit = async (data: TRegisterFormInputs) => {
 		console.log("data: ", data);
 		setIsPending(true);
 		try {
@@ -60,7 +60,7 @@ const Register = () => {
 						<section>
 							<form
 								className={styles.register_page__form}
-								onSubmit={handleSubmit(onFormSubmit)}
+								onSubmit={handleSubmit(onRegisterSubmit)}
 							>
 								<TextField
 									{...register("email")}
