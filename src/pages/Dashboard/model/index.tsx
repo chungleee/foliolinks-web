@@ -27,15 +27,20 @@ const MAX_FILE_SIZE = 5000000;
 export const profileSchema = z.object({
 	profilePic: z
 		.any()
-		.refine((files: FileList) => {
+		.optional()
+		.refine((files: FileList | undefined) => {
+			if (!files?.length) return true;
 			return files.length;
 		}, "Please upload an image")
 		.refine((files: FileList) => {
+			if (!files?.length) return true;
 			return ACCEPTED_FORMATS.includes(files[0]?.type);
 		}, "This format is not accepted")
 		.refine((files: FileList) => {
+			if (!files?.length) return true;
 			return files[0]?.size <= MAX_FILE_SIZE;
 		}, "File needs to be 5MB or less"),
+	username: z.string().min(1, { message: "Field is required" }).trim(),
 	firstName: z.string().min(1, { message: "Field is required" }).trim(),
 	lastName: z.string().min(1, { message: "Field is required" }).trim(),
 	email: z
