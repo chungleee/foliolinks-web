@@ -9,11 +9,10 @@ export const useAuth = () => {
 
 	const refreshAccessToken = async () => {
 		try {
-			// let url = "https://foliolinks-api.leonchung.ca";
 			let url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
 				: import.meta.env.VITE_PROD_URL;
-			console.log("url: ", url);
+
 			const result = await fetch(`${url}/api/users/auth/refresh`, {
 				method: "POST",
 				credentials: "include",
