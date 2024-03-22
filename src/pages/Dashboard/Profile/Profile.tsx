@@ -24,7 +24,19 @@ const Profile = () => {
 	const handleSave = async (data: TProfileFormValues) => {
 		console.log("form data: ", data);
 		try {
-			const result = await fetch(`${import.meta.env.VITE_PROD_URL}/api/`);
+			let url = import.meta.env.DEV
+				? import.meta.env.VITE_DEV_API
+				: import.meta.env.VITE_PROD_URL;
+
+			const token = localStorage.getItem("foliolinks_access_token");
+			const result = await fetch(`${url}/api/users/profile/create`, {
+				method: "POST",
+				body: JSON.stringify(data),
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			});
 			const json = await result.json();
 
 			console.log("json: ", json);
@@ -85,6 +97,15 @@ const Profile = () => {
 					</div>
 
 					<div className={styles.profile__form_section__personal_deets}>
+						<TextField
+							labelClassName={styles.textfields_layout}
+							inputContainerClassName={styles.textfields}
+							label='Username *'
+							type='text'
+							{...register("username")}
+							error={errors.firstName}
+							placeholder='John'
+						/>
 						<TextField
 							labelClassName={styles.textfields_layout}
 							inputContainerClassName={styles.textfields}
