@@ -2,13 +2,13 @@ import * as z from "zod";
 
 // ***** LINK FORM SCHEMA/TYPES *****
 export const createLinkSchema = z.object({
-	foliolinks: z
+	projects: z
 		.object({
-			projectName: z
+			project_name: z
 				.string()
 				.min(1, { message: "Project name is required" })
 				.trim(),
-			projectLink: z
+			project_url: z
 				.string()
 				.url()
 				.min(1, { message: "URL is required" })
