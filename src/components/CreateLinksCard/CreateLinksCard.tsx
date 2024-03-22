@@ -32,7 +32,7 @@ const CreateLinksCard = ({
 				iconVariant='zap'
 				placeholder='Enter the name of your project'
 				inputContainerClassName={styles.create_links_card__textfields}
-				{...register(`projects.${cardIndex}.projectName`)}
+				{...register(`projects.${cardIndex}.project_name`)}
 				error={errors?.project_name}
 			/>
 			<TextField
@@ -40,7 +40,7 @@ const CreateLinksCard = ({
 				iconVariant='link'
 				placeholder='e.g. https//www.github.com/project'
 				inputContainerClassName={styles.create_links_card__textfields}
-				{...register(`projects.${cardIndex}.projectLink`)}
+				{...register(`projects.${cardIndex}.project_url`)}
 				error={errors?.project_url}
 			/>
 		</div>
