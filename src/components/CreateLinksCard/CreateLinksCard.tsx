@@ -3,15 +3,15 @@ import { FieldErrors, UseFormRegister } from "react-hook-form";
 import TextField from "../common/TextField/TextField";
 import { TCreateLinksValues } from "../../zod";
 
-interface FolioLinkErrors {
-	projectName: string;
-	projectLink: string;
+interface ProjectErrors {
+	project_name: string;
+	project_url: string;
 }
 
 interface CreateLinksCardProps {
 	cardIndex: number;
 	remove: (index?: number | number[]) => void;
-	errors: FieldErrors<FolioLinkErrors> | undefined;
+	errors: FieldErrors<ProjectErrors> | undefined;
 	register: UseFormRegister<TCreateLinksValues>;
 }
 
@@ -32,16 +32,16 @@ const CreateLinksCard = ({
 				iconVariant='zap'
 				placeholder='Enter the name of your project'
 				inputContainerClassName={styles.create_links_card__textfields}
-				{...register(`foliolinks.${cardIndex}.projectName`)}
-				error={errors?.projectName}
+				{...register(`projects.${cardIndex}.projectName`)}
+				error={errors?.project_name}
 			/>
 			<TextField
 				label='Link'
 				iconVariant='link'
 				placeholder='e.g. https//www.github.com/project'
 				inputContainerClassName={styles.create_links_card__textfields}
-				{...register(`foliolinks.${cardIndex}.projectLink`)}
-				error={errors?.projectLink}
+				{...register(`projects.${cardIndex}.projectLink`)}
+				error={errors?.project_url}
 			/>
 		</div>
 	);
