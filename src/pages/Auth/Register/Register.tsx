@@ -7,7 +7,7 @@ import TextField from "../../../components/common/TextField/TextField";
 import Button from "../../../components/common/Button/Button";
 import AuthLayout from "../AuthLayout";
 import { useState } from "react";
-import { useAuth } from "../../../hooks";
+import { useAuth } from "../../../utils/hooks";
 
 const Register = () => {
 	useAuth();
