@@ -9,7 +9,10 @@ export const useAuth = () => {
 
 	const refreshAccessToken = async () => {
 		try {
-			let url = "https://foliolinks-api.leonchung.ca";
+			let url = import.meta.env.DEV
+				? import.meta.env.VITE_DEV_API
+				: import.meta.env.VITE_PROD_URL;
+
 			const result = await fetch(`${url}/api/users/auth/refresh`, {
 				method: "POST",
 				credentials: "include",
@@ -53,6 +56,13 @@ export const useAuth = () => {
 			}
 		}
 	}, []);
+
+	useEffect(() => {
+		const authRoutes = ["/login", "/register"];
+		if (isAuthenticated && authRoutes.includes(location.pathname)) {
+			navigate("/dashboard");
+		}
+	}, [isAuthenticated]);
 
 	return isAuthenticated;
 };

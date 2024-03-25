@@ -7,8 +7,10 @@ import { TLoginFormInputs, loginSchema } from "../model";
 import TextField from "../../../components/common/TextField/TextField";
 import Button from "../../../components/common/Button/Button";
 import AuthLayout from "../AuthLayout";
+import { useAuth } from "../../../hooks";
 
 const Login: FunctionComponent = () => {
+	useAuth();
 	const navigate = useNavigate();
 	const [isPending, setIsPending] = useState(false);
 
@@ -23,7 +25,9 @@ const Login: FunctionComponent = () => {
 	const onLoginSubmit = async (data: TLoginFormInputs) => {
 		setIsPending(true);
 		try {
-			let url = "https://foliolinks-api.leonchung.ca";
+			let url = import.meta.env.DEV
+				? import.meta.env.VITE_DEV_API
+				: import.meta.env.VITE_PROD_URL;
 
 			const result = await fetch(`${url}/api/users/auth/login`, {
 				method: "POST",

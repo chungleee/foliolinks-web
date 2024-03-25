@@ -21,20 +21,39 @@ const AddLinks = () => {
 	});
 
 	const { fields, append, remove } = useFieldArray({
-		name: "foliolinks",
+		name: "projects",
 		control,
 	});
 
 	const handleAddNewLink = () => {
 		flushSync(() => {
-			append({ projectName: "", projectLink: "" });
+			append({ project_name: "", project_url: "" });
 		});
 
 		ulRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
 	};
 
-	const handleSave = (data: TCreateLinksValues) => {
+	const handleSave = async (data: TCreateLinksValues) => {
 		console.log("data: ", data);
+		try {
+			let url = import.meta.env.DEV
+				? import.meta.env.VITE_DEV_API
+				: import.meta.env.VITE_PROD_URL;
+			const token = localStorage.getItem("foliolinks_access_token");
+
+			const result = await fetch(`${url}/api/users/projects`, {
+				method: "POST",
+				body: JSON.stringify(data),
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			});
+			const json = await result.json();
+			console.log("add links json: ", json);
+		} catch (error) {
+			console.log("error: ", error);
+		}
 	};
 
 	return (
@@ -61,7 +80,7 @@ const AddLinks = () => {
 											<CreateLinksCard
 												cardIndex={index}
 												remove={remove}
-												errors={errors.foliolinks?.[index]}
+												errors={errors.projects?.[index]}
 												register={register}
 											/>
 										</li>
