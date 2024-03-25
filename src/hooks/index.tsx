@@ -57,5 +57,12 @@ export const useAuth = () => {
 		}
 	}, []);
 
+	useEffect(() => {
+		const authRoutes = ["/login", "/register"];
+		if (isAuthenticated && authRoutes.includes(location.pathname)) {
+			navigate("/dashboard");
+		}
+	}, [isAuthenticated]);
+
 	return isAuthenticated;
 };
