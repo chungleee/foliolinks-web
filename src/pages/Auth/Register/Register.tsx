@@ -7,8 +7,10 @@ import TextField from "../../../components/common/TextField/TextField";
 import Button from "../../../components/common/Button/Button";
 import AuthLayout from "../AuthLayout";
 import { useState } from "react";
+import { useAuth } from "../../../hooks";
 
 const Register = () => {
+	useAuth();
 	const [isPending, setIsPending] = useState(false);
 	const navigate = useNavigate();
 	const {
@@ -20,18 +22,18 @@ const Register = () => {
 	});
 
 	const onRegisterSubmit = async (data: TRegisterFormInputs) => {
-		console.log("data: ", data);
 		setIsPending(true);
 		try {
-			const result = await fetch(
-				`${import.meta.env.VITE_PROD_URL}/api/users/auth/register`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(data),
-					credentials: "include",
-				}
-			);
+			let url = import.meta.env.DEV
+				? import.meta.env.VITE_DEV_API
+				: import.meta.env.VITE_PROD_URL;
+
+			const result = await fetch(`${url}/api/users/auth/register`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(data),
+				credentials: "include",
+			});
 
 			const json = await result.json();
 			const { access_token } = await json;
