@@ -20,7 +20,6 @@ export const useAuth = () => {
 
 			const json = await result.json();
 
-			console.log("refresh json: ", json);
 			if (json?.status === 400) {
 				throw Error(json.name);
 			} else {
