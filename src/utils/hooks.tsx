@@ -24,6 +24,7 @@ export const useAuth = () => {
 				throw Error(json.name);
 			} else {
 				localStorage.setItem("foliolinks_access_token", json.access_token);
+				setIsAuthenticated(true);
 				navigate(location.pathname);
 			}
 		} catch (error) {

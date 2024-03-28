@@ -8,6 +8,8 @@ interface Props {
 const ProtectedRoute = ({ children }: Props) => {
 	const isAuth = useAuth();
 
+	useEffect(() => {}, [isAuth]);
+
 	if (!isAuth) {
 		return <p>Not authenticated</p>;
 	}
