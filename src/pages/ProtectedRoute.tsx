@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { useAuth } from "../utils/hooks";
 
 interface Props {
