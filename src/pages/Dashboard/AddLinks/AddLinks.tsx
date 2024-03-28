@@ -1,6 +1,6 @@
 import styles from "./AddLinks.module.scss";
 import { useForm, useFieldArray } from "react-hook-form";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TCreateLinksValues, createLinkSchema } from "../model";
@@ -9,6 +9,32 @@ import CreateLinksCard from "../../../components/CreateLinksCard/CreateLinksCard
 import DashboardLayout from "../DashboardLayout";
 
 const AddLinks = () => {
+	const [projects, setProjects] = useState([]);
+
+	useEffect(() => {
+		let url = import.meta.env.DEV
+			? import.meta.env.VITE_DEV_API
+			: import.meta.env.VITE_PROD_URL;
+
+		const getProjects = async () => {
+			const token = localStorage.getItem("foliolinks_access_token");
+			const results = await fetch(`${url}/api/users/projects`, {
+				method: "get",
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			const json = await results.json();
+			const { projects } = json;
+
+			if (projects.length) {
+				setProjects(projects);
+			}
+		};
+
+		getProjects();
+	}, []);
+
 	const ulRef = useRef<HTMLUListElement | null>(null);
 
 	const {
@@ -56,6 +82,25 @@ const AddLinks = () => {
 		}
 	};
 
+	// const renderProjectsLinksCard = () => {
+	// 	return (
+	// 		<ul>
+	// 			{projects.map((id) => {
+	// 				return (
+	// 					<li key={id}>
+	// 						<CreateLinksCard
+	// 							cardIndex={1}
+	// 							remove={remove}
+	// 							errors={errors.projects?.[1]}
+	// 							register={register}
+	// 						/>
+	// 					</li>
+	// 				);
+	// 			})}
+	// 		</ul>
+	// 	);
+	// };
+
 	return (
 		<DashboardLayout>
 			<div className={styles.dashboard}>
@@ -71,6 +116,7 @@ const AddLinks = () => {
 				</section>
 
 				<section className={styles.dashboard_create__container}>
+					{/*projects.length ? renderProjectsLinksCard() : null*/}
 					<ul ref={ulRef}>
 						{fields.length ? (
 							<>
