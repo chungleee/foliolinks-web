@@ -20,11 +20,11 @@ export const useAuth = () => {
 
 			const json = await result.json();
 
-			console.log("refresh json: ", json);
 			if (json?.status === 400) {
 				throw Error(json.name);
 			} else {
 				localStorage.setItem("foliolinks_access_token", json.access_token);
+				setIsAuthenticated(true);
 				navigate(location.pathname);
 			}
 		} catch (error) {

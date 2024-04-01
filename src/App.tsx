@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./hooks";
+import { useAuth } from "./utils/hooks";
 
 function App() {
 	const isAuth = useAuth();
@@ -11,7 +11,7 @@ function App() {
 
 	return (
 		<>
-			<h1>hello world</h1>
+			<div>...LOADING...</div>
 		</>
 	);
 }
