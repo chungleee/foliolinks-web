@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 import { useAuth } from "../utils/hooks";
 
 interface Props {
@@ -6,13 +6,7 @@ interface Props {
 }
 
 const ProtectedRoute = ({ children }: Props) => {
-	const isAuth = useAuth();
-
-	useEffect(() => {}, [isAuth]);
-
-	if (!isAuth) {
-		return <p>Not authenticated</p>;
-	}
+	useAuth();
 
 	return <>{children}</>;
 };
