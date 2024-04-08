@@ -8,10 +8,14 @@ import TextField from "../../../components/common/TextField/TextField";
 import Button from "../../../components/common/Button/Button";
 import AuthLayout from "../AuthLayout";
 import { useAuth } from "../../../utils/hooks";
+import { useStore } from "../../../zustand/store";
 
 const Login: FunctionComponent = () => {
 	useAuth();
 	const navigate = useNavigate();
+	const updateAuthedUser = useStore((state) => {
+		return state.updateAuthedUser;
+	});
 	const [isPending, setIsPending] = useState(false);
 
 	const {
@@ -37,7 +41,9 @@ const Login: FunctionComponent = () => {
 			});
 
 			const json = await result.json();
-			const { access_token } = await json;
+			const { access_token, user } = await json;
+
+			updateAuthedUser(user);
 
 			await localStorage.setItem("foliolinks_access_token", access_token);
 			await navigate("/dashboard");
