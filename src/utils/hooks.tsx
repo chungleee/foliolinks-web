@@ -45,10 +45,6 @@ export const useAuth = () => {
 	 * 		- if expired, run refresh access token function
 	 */
 	useEffect(() => {
-		// const access_token = localStorage.getItem(
-		// 	"foliolinks_access_token"
-		// ) as string;
-
 		if (!access_token) {
 			setIsAuthenticated(false);
 			navigate("/login");
@@ -76,6 +72,12 @@ export const useAuth = () => {
 		const authRoutes = ["/login", "/register"];
 		if (isAuthenticated && authRoutes.includes(location.pathname)) {
 			navigate("/dashboard");
+		}
+
+		if (!access_token) {
+			setIsAuthenticated(false);
+			navigate("/login");
+			return;
 		}
 
 		const { exp } = jwtDecode(access_token) as { exp: number };
