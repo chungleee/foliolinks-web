@@ -13,8 +13,8 @@ import { useStore } from "../../../zustand/store";
 const Login: FunctionComponent = () => {
 	useAuth();
 	const navigate = useNavigate();
-	const updateAuthedUser = useStore((state) => {
-		return state.updateAuthedUser;
+	const setAuthenticatedUser = useStore((state) => {
+		return state.setAuthenticatedUser;
 	});
 	const [isPending, setIsPending] = useState(false);
 
@@ -43,7 +43,7 @@ const Login: FunctionComponent = () => {
 			const json = await result.json();
 			const { access_token, user } = await json;
 
-			updateAuthedUser(user);
+			setAuthenticatedUser(user);
 
 			await localStorage.setItem("foliolinks_access_token", access_token);
 			await navigate("/dashboard");
