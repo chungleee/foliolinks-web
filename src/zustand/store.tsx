@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 interface Project {
+	id: string;
 	project_name: string;
 	project_url: string;
 }
@@ -23,14 +24,30 @@ interface UserData {
 
 interface StoreState {
 	authenticatedUser: UserData | null;
-	updateAuthedUser: (userData: UserData) => void;
+	setAuthenticatedUser: (userData: UserData) => void;
+	projects: Project[];
+	setProjects: (projects: Project[]) => void;
 }
 
-export const useStore = create<StoreState>()((set) => {
+export const useStore = create<StoreState>()((set, get) => {
 	return {
 		authenticatedUser: null,
-		updateAuthedUser: (userData) => {
+		setAuthenticatedUser: (userData) => {
 			return set({ authenticatedUser: userData });
+		},
+		projects: [],
+		setProjects: (projectsArray) => {
+			const updatedProjects = projectsArray.reduce((acc, project) => {
+				const existingProject = get().projects.find((p) => {
+					return p.id === project.id;
+				});
+				if (!existingProject) {
+					acc.push(project);
+				}
+				return acc;
+			}, [] as Project[]);
+			console.log("updatedProjects: ", updatedProjects);
+			return set({ projects: updatedProjects });
 		},
 	};
 });
