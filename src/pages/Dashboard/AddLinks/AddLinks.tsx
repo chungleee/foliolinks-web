@@ -1,12 +1,13 @@
 import styles from "./AddLinks.module.scss";
 import { useForm, useFieldArray } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TCreateLinksValues, createLinkSchema } from "../model";
 import Button from "../../../components/common/Button/Button";
 import CreateLinksCard from "../../../components/CreateLinksCard/CreateLinksCard";
 import DashboardLayout from "../DashboardLayout";
+import { useStore } from "../../../zustand/store";
 
 interface Project {
 	project_name: string;
@@ -14,7 +15,9 @@ interface Project {
 }
 
 const AddLinks = () => {
-	const [projects, setProjects] = useState<Project[]>([]);
+	const { projects, setProjects } = useStore((state) => {
+		return { projects: state.projects, setProjects: state.setProjects };
+	});
 
 	useEffect(() => {
 		const getProjects = async () => {
@@ -31,21 +34,21 @@ const AddLinks = () => {
 			});
 			const json = await results.json();
 
-			if (json.projects.length) {
-				setProjects(json.projects);
-
-				append(
-					projects.map((project: Project) => {
-						return {
-							project_name: project.project_name,
-							project_url: project.project_url,
-						};
-					})
-				);
-			}
+			setProjects(json.projects);
 		};
 
 		getProjects();
+	}, []);
+
+	useEffect(() => {
+		append(
+			projects.map((project: Project) => {
+				return {
+					project_name: project.project_name,
+					project_url: project.project_url,
+				};
+			})
+		);
 	}, [projects.length]);
 
 	const ulRef = useRef<HTMLUListElement | null>(null);
