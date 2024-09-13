@@ -25,7 +25,7 @@ const Login: FunctionComponent = () => {
 	const onLoginSubmit = async (data: TLoginFormInputs) => {
 		setIsPending(true);
 		try {
-			let url = import.meta.env.DEV
+			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
 				: import.meta.env.VITE_PROD_URL;
 
