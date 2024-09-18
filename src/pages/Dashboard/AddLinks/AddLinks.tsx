@@ -43,14 +43,6 @@ const AddLinks = () => {
 
 			const json = await results.json();
 			setProjects(json.projects);
-			// append(
-			// 	json.projects.map((project: Project) => {
-			// 		return {
-			// 			project_name: project.project_name,
-			// 			project_url: project.project_url,
-			// 		};
-			// 	})
-			// );
 		};
 
 		getProjects();
@@ -87,6 +79,10 @@ const AddLinks = () => {
 		}
 	};
 
+	const handleDelete = async (project: Project) => {
+		console.log("project: ", project);
+	};
+
 	return (
 		<DashboardLayout>
 			<div className={styles.dashboard}>
@@ -105,8 +101,12 @@ const AddLinks = () => {
 					<ul ref={ulRef}>
 						{projects.map((project, idx) => {
 							return (
-								<li key={`${project.project_url} unique id`}>
-									<CreateLinksCard existingProject={project} cardIndex={idx} />
+								<li key={`${project.id}`}>
+									<CreateLinksCard
+										existingProject={project}
+										cardIndex={idx}
+										handleDelete={handleDelete}
+									/>
 								</li>
 							);
 						})}
@@ -117,9 +117,10 @@ const AddLinks = () => {
 										<li key={field.id}>
 											<CreateLinksCard
 												cardIndex={index}
-												remove={remove}
 												errors={errors.projects?.[index]}
+												existingProjectIdx={projects.length + index + 1}
 												register={register}
+												remove={remove}
 											/>
 										</li>
 									);

@@ -10,6 +10,8 @@ interface CreateLinksCardProps {
 	errors?: FieldErrors<ProjectErrors> | undefined;
 	register?: UseFormRegister<TCreateLinksValues>;
 	existingProject?: Project;
+	existingProjectIdx?: number;
+	handleDelete?: (project: Project) => void;
 }
 
 const CreateLinksCard = ({
@@ -18,12 +20,26 @@ const CreateLinksCard = ({
 	errors,
 	register,
 	existingProject: initialProjectData,
+	existingProjectIdx,
+	handleDelete,
 }: CreateLinksCardProps) => {
 	return (
-		<div className={styles.create_links_card}>
+		<div
+			className={
+				initialProjectData
+					? `${styles.create_links_card} ${styles.existing_project}`
+					: `${styles.create_links_card}`
+			}
+		>
 			<div>
-				<span>link #{`${cardIndex + 1}`}</span>
-				<button onClick={() => remove?.(cardIndex)}>remove</button>
+				<span>link #{`${existingProjectIdx || cardIndex + 1}`}</span>
+				{handleDelete && initialProjectData ? (
+					<button onClick={() => handleDelete?.(initialProjectData)}>
+						delete
+					</button>
+				) : (
+					<button onClick={() => remove?.(cardIndex)}>remove</button>
+				)}
 			</div>
 			<TextField
 				label='Project name'
@@ -31,7 +47,6 @@ const CreateLinksCard = ({
 				placeholder='Enter the name of your project'
 				inputContainerClassName={styles.create_links_card__textfields}
 				{...(register && register(`projects.${cardIndex}.project_name`))}
-				// {...register(`projects.${cardIndex}.project_name`)}
 				error={errors?.project_name}
 				value={initialProjectData?.project_name}
 			/>
@@ -41,7 +56,6 @@ const CreateLinksCard = ({
 				placeholder='e.g. https//www.github.com/project'
 				inputContainerClassName={styles.create_links_card__textfields}
 				{...(register && register(`projects.${cardIndex}.project_url`))}
-				// {...register(`projects.${cardIndex}.project_url`)}
 				error={errors?.project_url}
 				value={initialProjectData?.project_url}
 			/>
