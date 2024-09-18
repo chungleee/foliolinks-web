@@ -13,6 +13,7 @@ interface TextFieldProps {
 	inputClassName?: string;
 	labelClassName?: string;
 	inputContainerClassName?: string;
+	value?: string;
 }
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -27,6 +28,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 			inputClassName,
 			labelClassName,
 			inputContainerClassName,
+			value,
 			...props
 		},
 		ref
@@ -51,6 +53,8 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 							{...props}
 							type={type}
 							placeholder={placeholder}
+							value={value}
+							disabled={!!value}
 						/>
 						{error?.message && (
 							<small className={styles.error_message}>{error.message}</small>
