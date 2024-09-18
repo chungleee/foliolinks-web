@@ -7,47 +7,10 @@ import { TCreateLinksValues, createLinkSchema } from "../model";
 import Button from "../../../components/common/Button/Button";
 import CreateLinksCard from "../../../components/CreateLinksCard/CreateLinksCard";
 import DashboardLayout from "../DashboardLayout";
-
-interface Project {
-	project_name: string;
-	project_url: string;
-}
+import { Project } from "../../../types";
 
 const AddLinks = () => {
 	const [projects, setProjects] = useState<Project[]>([]);
-
-	useEffect(() => {
-		const getProjects = async () => {
-			let url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
-
-			const token = localStorage.getItem("foliolinks_access_token");
-			const results = await fetch(`${url}/api/users/projects`, {
-				method: "get",
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			const json = await results.json();
-
-			if (json.projects.length) {
-				setProjects(json.projects);
-
-				append(
-					projects.map((project: Project) => {
-						return {
-							project_name: project.project_name,
-							project_url: project.project_url,
-						};
-					})
-				);
-			}
-		};
-
-		getProjects();
-	}, [projects.length]);
-
 	const ulRef = useRef<HTMLUListElement | null>(null);
 
 	const {
@@ -64,6 +27,35 @@ const AddLinks = () => {
 		control,
 	});
 
+	useEffect(() => {
+		const getProjects = async () => {
+			const url = import.meta.env.DEV
+				? import.meta.env.VITE_DEV_API
+				: import.meta.env.VITE_PROD_URL;
+
+			const token = localStorage.getItem("foliolinks_access_token");
+			const results = await fetch(`${url}/api/users/projects`, {
+				method: "get",
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const json = await results.json();
+			setProjects(json.projects);
+			// append(
+			// 	json.projects.map((project: Project) => {
+			// 		return {
+			// 			project_name: project.project_name,
+			// 			project_url: project.project_url,
+			// 		};
+			// 	})
+			// );
+		};
+
+		getProjects();
+	}, [append]);
+
 	const handleAddNewLink = () => {
 		flushSync(() => {
 			append({ project_name: "", project_url: "" });
@@ -75,7 +67,7 @@ const AddLinks = () => {
 	const handleSave = async (data: TCreateLinksValues) => {
 		console.log("data: ", data);
 		try {
-			let url = import.meta.env.DEV
+			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
 				: import.meta.env.VITE_PROD_URL;
 			const token = localStorage.getItem("foliolinks_access_token");
@@ -111,7 +103,14 @@ const AddLinks = () => {
 
 				<section className={styles.dashboard_create__container}>
 					<ul ref={ulRef}>
-						{fields.length ? (
+						{projects.map((project, idx) => {
+							return (
+								<li key={`${project.project_url} unique id`}>
+									<CreateLinksCard existingProject={project} cardIndex={idx} />
+								</li>
+							);
+						})}
+						{fields.length || projects.length ? (
 							<>
 								{fields.map((field, index) => {
 									return (
