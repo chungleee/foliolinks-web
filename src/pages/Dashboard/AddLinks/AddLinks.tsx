@@ -1,6 +1,6 @@
 import styles from "./AddLinks.module.scss";
 import { useForm, useFieldArray } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TCreateLinksValues, createLinkSchema } from "../model";
@@ -8,8 +8,10 @@ import Button from "../../../components/common/Button/Button";
 import CreateLinksCard from "../../../components/CreateLinksCard/CreateLinksCard";
 import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
+import { UserContext } from "../../../contexts/UserProvider";
 
 const AddLinks = () => {
+	const { userProfile } = useContext(UserContext);
 	const [projects, setProjects] = useState<Project[]>([]);
 	const ulRef = useRef<HTMLUListElement | null>(null);
 
@@ -80,7 +82,33 @@ const AddLinks = () => {
 	};
 
 	const handleDelete = async (project: Project) => {
-		console.log("project: ", project);
+		try {
+			const url = import.meta.env.DEV
+				? import.meta.env.VITE_DEV_API
+				: import.meta.env.VITE_PROD_URL;
+			const token = localStorage.getItem("foliolinks_access_token");
+
+			const result = await fetch(`${url}/api/users/projects/${project.id}`, {
+				method: "DELETE",
+				body: JSON.stringify({
+					project,
+				}),
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			});
+			const json = await result.json();
+
+			if (json.deleted) {
+				const updated = projects.filter((p) => {
+					return p.id !== json.project.id;
+				});
+				setProjects(updated);
+			}
+		} catch (error) {
+			console.log("error: ", error);
+		}
 	};
 
 	return (
@@ -91,7 +119,7 @@ const AddLinks = () => {
 						Add/edit/remove links below and then share all your links with the
 						world!
 					</p>
-					<h2>Customize your links</h2>
+					<h2>Customize your links, {`${userProfile?.username}`}</h2>
 					<Button onClick={handleAddNewLink} variant='secondary'>
 						+ Add new link
 					</Button>

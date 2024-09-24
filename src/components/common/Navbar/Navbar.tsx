@@ -14,7 +14,7 @@ interface NavbarProps {
 	}[];
 }
 const Navbar = ({ navigationLinks, className }: NavbarProps) => {
-	let pathname = useLocation().pathname;
+	const pathname = useLocation().pathname;
 
 	return (
 		<nav className={`${styles.navbar} ${className}`}>

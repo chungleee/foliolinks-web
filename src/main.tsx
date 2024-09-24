@@ -9,6 +9,7 @@ import Register from "./pages/Auth/Register/Register.tsx";
 import Profile from "./pages/Dashboard/Profile/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ProtectedRoute from "./pages/ProtectedRoute.tsx";
+import UserProvider from "./contexts/UserProvider.tsx";
 
 const router = createBrowserRouter([
 	{ path: "*", element: <NotFound /> },
@@ -20,7 +21,9 @@ const router = createBrowserRouter([
 		path: "/dashboard",
 		element: (
 			<ProtectedRoute>
-				<AddLinks />
+				<UserProvider>
+					<AddLinks />
+				</UserProvider>
 			</ProtectedRoute>
 		),
 	},
@@ -28,7 +31,9 @@ const router = createBrowserRouter([
 		path: "/dashboard/profile",
 		element: (
 			<ProtectedRoute>
-				<Profile />
+				<UserProvider>
+					<Profile />
+				</UserProvider>
 			</ProtectedRoute>
 		),
 	},
