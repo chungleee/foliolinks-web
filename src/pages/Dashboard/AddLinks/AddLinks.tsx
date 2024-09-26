@@ -48,7 +48,7 @@ const AddLinks = () => {
 		};
 
 		getProjects();
-	}, [append]);
+	}, []);
 
 	const handleAddNewLink = () => {
 		flushSync(() => {
@@ -59,7 +59,6 @@ const AddLinks = () => {
 	};
 
 	const handleSave = async (data: TCreateLinksValues) => {
-		console.log("data: ", data);
 		try {
 			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
@@ -75,7 +74,10 @@ const AddLinks = () => {
 				},
 			});
 			const json = await result.json();
-			console.log("add links json: ", json);
+			if (json.projects.length) {
+				setProjects((prev) => [...prev, ...json.projects]);
+				remove();
+			}
 		} catch (error) {
 			console.log("error: ", error);
 		}
