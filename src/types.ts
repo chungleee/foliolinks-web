@@ -15,6 +15,8 @@ export interface UserProfile {
 	firstName: string;
 	lastName: string;
 	username: string;
-	membership: string;
+	membership: UserMembership;
 	email: string;
 }
+
+export type UserMembership = "BASIC" | "PRO";

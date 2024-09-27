@@ -13,6 +13,7 @@ import { UserContext } from "../../../contexts/UserProvider";
 const AddLinks = () => {
 	const { userProfile } = useContext(UserContext);
 	const [projects, setProjects] = useState<Project[]>([]);
+	const [limit] = useState<number>(userProfile?.membership === "PRO" ? 3 : 1);
 	const ulRef = useRef<HTMLUListElement | null>(null);
 
 	const {
@@ -51,6 +52,10 @@ const AddLinks = () => {
 	}, []);
 
 	const handleAddNewLink = () => {
+		if (limit <= (projects.length || fields.length)) {
+			return console.log("limit reached");
+		}
+
 		flushSync(() => {
 			append({ project_name: "", project_url: "" });
 		});
@@ -122,9 +127,14 @@ const AddLinks = () => {
 						world!
 					</p>
 					<h2>Customize your links, {`${userProfile?.username}`}</h2>
-					<Button onClick={handleAddNewLink} variant='secondary'>
+					<Button
+						disabled={limit <= (projects.length || fields.length)}
+						onClick={handleAddNewLink}
+						variant='secondary'
+					>
 						+ Add new link
 					</Button>
+					<small>You've reached your limits.</small>
 				</section>
 
 				<section className={styles.dashboard_create__container}>
