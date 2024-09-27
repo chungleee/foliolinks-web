@@ -134,7 +134,9 @@ const AddLinks = () => {
 					>
 						+ Add new link
 					</Button>
-					<small>You've reached your limits.</small>
+					{limit <= (projects.length || fields.length) && (
+						<small>You've reached your limits.</small>
+					)}
 				</section>
 
 				<section className={styles.dashboard_create__container}>
@@ -199,9 +201,8 @@ const AddLinkInfo = () => {
 			</div>
 			<div>
 				<p>
-					Use the "Add new link" button to get started. Once you have more than
-					one link, you can reorder and edit them. We're here to help you share
-					your profiles with everyone!
+					Use the "Add new link" button to get started. We're here to help you
+					share your profiles with everyone!
 				</p>
 				<h2>Let's get you started</h2>
 			</div>
