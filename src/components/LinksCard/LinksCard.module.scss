@@ -25,6 +25,15 @@
 			background-color: inherit;
 			cursor: pointer;
 		}
+
+		button:hover {
+			color: variables.$purple;
+		}
+
+		button:disabled {
+			color: inherit;
+			cursor: not-allowed;
+		}
 	}
 
 	&__textfields {

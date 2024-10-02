@@ -4,6 +4,7 @@ import * as z from "zod";
 export const createLinkSchema = z.object({
 	projects: z
 		.object({
+			project_id: z.string().optional(),
 			project_name: z
 				.string()
 				.min(1, { message: "Project name is required" })

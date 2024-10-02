@@ -5,7 +5,7 @@ import { flushSync } from "react-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TCreateLinksValues, createLinkSchema } from "../model";
 import Button from "../../../components/common/Button/Button";
-import CreateLinksCard from "../../../components/CreateLinksCard/CreateLinksCard";
+import LinksCard from "../../../components/LinksCard/LinksCard";
 import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
 import { UserContext } from "../../../contexts/UserProvider";
@@ -25,7 +25,7 @@ const AddLinks = () => {
 		resolver: zodResolver(createLinkSchema),
 	});
 
-	const { fields, append, remove } = useFieldArray({
+	const { fields, append, remove, update } = useFieldArray({
 		name: "projects",
 		control,
 	});
@@ -50,6 +50,12 @@ const AddLinks = () => {
 
 		getProjects();
 	}, []);
+
+	useEffect(() => {
+		projects.forEach((project, index) => {
+			update(index, { ...project, project_id: project.id });
+		});
+	}, [projects, update]);
 
 	const handleAddNewLink = () => {
 		if (limit <= (projects.length || fields.length)) {
@@ -88,7 +94,7 @@ const AddLinks = () => {
 		}
 	};
 
-	const handleDelete = async (project: Project) => {
+	const handleDelete = async (project: Project, fieldIndex: number) => {
 		try {
 			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
@@ -112,10 +118,15 @@ const AddLinks = () => {
 					return p.id !== json.project.id;
 				});
 				setProjects(updated);
+				remove(fieldIndex);
 			}
 		} catch (error) {
 			console.log("error: ", error);
 		}
+	};
+
+	const handleUpdateProject = async (project: Project): Promise<void> => {
+		console.log("updated: ", project);
 	};
 
 	return (
@@ -141,28 +152,25 @@ const AddLinks = () => {
 
 				<section className={styles.dashboard_create__container}>
 					<ul ref={ulRef}>
-						{projects.map((project, idx) => {
-							return (
-								<li key={`${project.id}`}>
-									<CreateLinksCard
-										existingProject={project}
-										cardIndex={idx}
-										handleDelete={handleDelete}
-									/>
-								</li>
-							);
-						})}
-						{fields.length || projects.length ? (
+						{fields.length ? (
 							<>
 								{fields.map((field, index) => {
+									const existingProject = projects.find((project) => {
+										return project.id === field.project_id;
+									});
 									return (
 										<li key={field.id}>
-											<CreateLinksCard
+											<LinksCard
 												cardIndex={index}
 												errors={errors.projects?.[index]}
-												existingProjectIdx={projects.length + index + 1}
+												existingProject={existingProject}
 												register={register}
-												remove={remove}
+												remove={!existingProject ? remove : undefined}
+												handleDelete={existingProject && handleDelete}
+												handleUpdateProject={
+													existingProject && handleUpdateProject
+												}
+												control={control}
 											/>
 										</li>
 									);
