@@ -5,7 +5,7 @@ import { flushSync } from "react-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TCreateLinksValues, createLinkSchema } from "../model";
 import Button from "../../../components/common/Button/Button";
-import CreateLinksCard from "../../../components/CreateLinksCard/CreateLinksCard";
+import LinksCard from "../../../components/LinksCard/LinksCard";
 import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
 import { UserContext } from "../../../contexts/UserProvider";
@@ -13,7 +13,6 @@ import { UserContext } from "../../../contexts/UserProvider";
 const AddLinks = () => {
 	const { userProfile } = useContext(UserContext);
 	const [projects, setProjects] = useState<Project[]>([]);
-	const [limit] = useState<number>(userProfile?.membership === "PRO" ? 3 : 1);
 	const ulRef = useRef<HTMLUListElement | null>(null);
 
 	const {
@@ -25,10 +24,13 @@ const AddLinks = () => {
 		resolver: zodResolver(createLinkSchema),
 	});
 
-	const { fields, append, remove } = useFieldArray({
+	const { fields, append, remove, update } = useFieldArray({
 		name: "projects",
 		control,
 	});
+
+	const limit = userProfile?.membership === "PRO" ? 3 : 1;
+	const limitReached = limit <= fields.length;
 
 	useEffect(() => {
 		const getProjects = async () => {
@@ -51,9 +53,16 @@ const AddLinks = () => {
 		getProjects();
 	}, []);
 
+	useEffect(() => {
+		projects.forEach((project, index) => {
+			update(index, { ...project, project_id: project.id });
+		});
+	}, [projects, update]);
+
 	const handleAddNewLink = () => {
-		if (limit <= (projects.length || fields.length)) {
-			return console.log("limit reached");
+		if (limitReached) {
+			console.log("limit reached");
+			return;
 		}
 
 		flushSync(() => {
@@ -64,6 +73,10 @@ const AddLinks = () => {
 	};
 
 	const handleSave = async (data: TCreateLinksValues) => {
+		const createProjects = data.projects.filter((project) => {
+			return !project.project_id ? project : false;
+		});
+
 		try {
 			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
@@ -72,7 +85,7 @@ const AddLinks = () => {
 
 			const result = await fetch(`${url}/api/users/projects`, {
 				method: "POST",
-				body: JSON.stringify(data),
+				body: JSON.stringify({ projects: createProjects }),
 				headers: {
 					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
@@ -81,14 +94,14 @@ const AddLinks = () => {
 			const json = await result.json();
 			if (json.projects.length) {
 				setProjects((prev) => [...prev, ...json.projects]);
-				remove();
 			}
+			remove();
 		} catch (error) {
 			console.log("error: ", error);
 		}
 	};
 
-	const handleDelete = async (project: Project) => {
+	const handleDelete = async (project: Project, fieldIndex: number) => {
 		try {
 			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
@@ -112,7 +125,41 @@ const AddLinks = () => {
 					return p.id !== json.project.id;
 				});
 				setProjects(updated);
+				remove(fieldIndex);
 			}
+		} catch (error) {
+			console.log("error: ", error);
+		}
+	};
+
+	const handleUpdateProject = async (project: Project) => {
+		try {
+			const url = import.meta.env.DEV
+				? import.meta.env.VITE_DEV_API
+				: import.meta.env.VITE_PROD_URL;
+			const token = localStorage.getItem("foliolinks_access_token");
+
+			const result = await fetch(`${url}/api/users/projects/`, {
+				method: "PATCH",
+				body: JSON.stringify({
+					updateProject: project,
+				}),
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			});
+			const json = await result.json();
+
+			const updatedProjects = projects.map((project) => {
+				if (project.id === json.updatedProject.id) {
+					return (project = {
+						...json.updatedProject,
+					});
+				}
+				return project;
+			});
+			setProjects(updatedProjects);
 		} catch (error) {
 			console.log("error: ", error);
 		}
@@ -128,41 +175,36 @@ const AddLinks = () => {
 					</p>
 					<h2>Customize your links, {`${userProfile?.username}`}</h2>
 					<Button
-						disabled={limit <= (projects.length || fields.length)}
+						disabled={limitReached}
 						onClick={handleAddNewLink}
 						variant='secondary'
 					>
 						+ Add new link
 					</Button>
-					{limit <= (projects.length || fields.length) && (
-						<small>You've reached your limits.</small>
-					)}
+					{limitReached && <small>You've reached your limits.</small>}
 				</section>
 
 				<section className={styles.dashboard_create__container}>
 					<ul ref={ulRef}>
-						{projects.map((project, idx) => {
-							return (
-								<li key={`${project.id}`}>
-									<CreateLinksCard
-										existingProject={project}
-										cardIndex={idx}
-										handleDelete={handleDelete}
-									/>
-								</li>
-							);
-						})}
-						{fields.length || projects.length ? (
+						{fields.length ? (
 							<>
 								{fields.map((field, index) => {
+									const existingProject = projects.find((project) => {
+										return project.id === field.project_id;
+									});
 									return (
 										<li key={field.id}>
-											<CreateLinksCard
+											<LinksCard
 												cardIndex={index}
 												errors={errors.projects?.[index]}
-												existingProjectIdx={projects.length + index + 1}
+												existingProject={existingProject}
 												register={register}
-												remove={remove}
+												remove={!existingProject ? remove : undefined}
+												handleDelete={existingProject && handleDelete}
+												handleUpdateProject={
+													existingProject && handleUpdateProject
+												}
+												control={control}
 											/>
 										</li>
 									);
@@ -178,7 +220,7 @@ const AddLinks = () => {
 					<Button
 						onClick={handleSubmit(handleSave)}
 						type='submit'
-						disabled={fields.length ? false : true}
+						disabled={!!fields[fields.length - 1]?.project_id}
 						variant='default'
 					>
 						Save
