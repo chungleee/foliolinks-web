@@ -148,6 +148,7 @@ const AddLinks = () => {
 					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
 				},
+				credentials: "include",
 			});
 			const json = await result.json();
 
