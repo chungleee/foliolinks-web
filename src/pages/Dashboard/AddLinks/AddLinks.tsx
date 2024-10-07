@@ -13,7 +13,6 @@ import { UserContext } from "../../../contexts/UserProvider";
 const AddLinks = () => {
 	const { userProfile } = useContext(UserContext);
 	const [projects, setProjects] = useState<Project[]>([]);
-	const [limit] = useState<number>(userProfile?.membership === "PRO" ? 3 : 1);
 	const ulRef = useRef<HTMLUListElement | null>(null);
 
 	const {
@@ -29,6 +28,9 @@ const AddLinks = () => {
 		name: "projects",
 		control,
 	});
+
+	const limit = userProfile?.membership === "PRO" ? 3 : 1;
+	const limitReached = limit <= fields.length;
 
 	useEffect(() => {
 		const getProjects = async () => {
@@ -58,8 +60,9 @@ const AddLinks = () => {
 	}, [projects, update]);
 
 	const handleAddNewLink = () => {
-		if (limit <= (projects.length || fields.length)) {
-			return console.log("limit reached");
+		if (limitReached) {
+			console.log("limit reached");
+			return;
 		}
 
 		flushSync(() => {
@@ -70,6 +73,10 @@ const AddLinks = () => {
 	};
 
 	const handleSave = async (data: TCreateLinksValues) => {
+		const createProjects = data.projects.filter((project) => {
+			return !project.project_id ? project : false;
+		});
+
 		try {
 			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
@@ -78,7 +85,7 @@ const AddLinks = () => {
 
 			const result = await fetch(`${url}/api/users/projects`, {
 				method: "POST",
-				body: JSON.stringify(data),
+				body: JSON.stringify({ projects: createProjects }),
 				headers: {
 					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
@@ -87,8 +94,8 @@ const AddLinks = () => {
 			const json = await result.json();
 			if (json.projects.length) {
 				setProjects((prev) => [...prev, ...json.projects]);
-				remove();
 			}
+			remove();
 		} catch (error) {
 			console.log("error: ", error);
 		}
@@ -125,8 +132,37 @@ const AddLinks = () => {
 		}
 	};
 
-	const handleUpdateProject = async (project: Project): Promise<void> => {
-		console.log("updated: ", project);
+	const handleUpdateProject = async (project: Project) => {
+		try {
+			const url = import.meta.env.DEV
+				? import.meta.env.VITE_DEV_API
+				: import.meta.env.VITE_PROD_URL;
+			const token = localStorage.getItem("foliolinks_access_token");
+
+			const result = await fetch(`${url}/api/users/projects/`, {
+				method: "PATCH",
+				body: JSON.stringify({
+					updateProject: project,
+				}),
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			});
+			const json = await result.json();
+
+			const updatedProjects = projects.map((project) => {
+				if (project.id === json.updatedProject.id) {
+					return (project = {
+						...json.updatedProject,
+					});
+				}
+				return project;
+			});
+			setProjects(updatedProjects);
+		} catch (error) {
+			console.log("error: ", error);
+		}
 	};
 
 	return (
@@ -139,15 +175,13 @@ const AddLinks = () => {
 					</p>
 					<h2>Customize your links, {`${userProfile?.username}`}</h2>
 					<Button
-						disabled={limit <= (projects.length || fields.length)}
+						disabled={limitReached}
 						onClick={handleAddNewLink}
 						variant='secondary'
 					>
 						+ Add new link
 					</Button>
-					{limit <= (projects.length || fields.length) && (
-						<small>You've reached your limits.</small>
-					)}
+					{limitReached && <small>You've reached your limits.</small>}
 				</section>
 
 				<section className={styles.dashboard_create__container}>
@@ -186,7 +220,7 @@ const AddLinks = () => {
 					<Button
 						onClick={handleSubmit(handleSave)}
 						type='submit'
-						disabled={fields.length ? false : true}
+						disabled={!!fields[fields.length - 1]?.project_id}
 						variant='default'
 					>
 						Save

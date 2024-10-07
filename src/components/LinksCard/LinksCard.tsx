@@ -89,7 +89,13 @@ const LinksCard = ({
 								delete
 							</button>
 						) : (
-							<button onClick={() => remove?.(cardIndex)}>remove</button>
+							<button
+								onClick={() => {
+									remove?.(cardIndex);
+								}}
+							>
+								remove
+							</button>
 						)}
 					</div>
 				)}
@@ -101,7 +107,7 @@ const LinksCard = ({
 				inputContainerClassName={styles.create_links_card__textfields}
 				{...(register && register(`projects.${cardIndex}.project_name`))}
 				error={errors?.project_name}
-				editing={!isEditing}
+				editing={initialProjectData ? !isEditing : isEditing}
 				defaultValue={`projects.${cardIndex}.project_name`}
 			/>
 			<TextField
@@ -111,7 +117,7 @@ const LinksCard = ({
 				inputContainerClassName={styles.create_links_card__textfields}
 				{...(register && register(`projects.${cardIndex}.project_url`))}
 				error={errors?.project_url}
-				editing={!isEditing}
+				editing={initialProjectData ? !isEditing : isEditing}
 				defaultValue={`projects.${cardIndex}.project_url`}
 			/>
 		</div>
