@@ -9,10 +9,11 @@ import LinksCard from "../../../components/LinksCard/LinksCard";
 import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
 import { UserContext } from "../../../contexts/UserProvider";
+import { useQuery } from "@tanstack/react-query";
 
 const AddLinks = () => {
 	const { userProfile } = useContext(UserContext);
-	const [projects, setProjects] = useState<Project[]>([]);
+	// const [projects, setProjects] = useState<Project[]>([]);
 	const ulRef = useRef<HTMLUListElement | null>(null);
 
 	const {
@@ -32,31 +33,62 @@ const AddLinks = () => {
 	const limit = userProfile?.membership === "PRO" ? 3 : 1;
 	const limitReached = limit <= fields.length;
 
-	useEffect(() => {
-		const getProjects = async () => {
-			const url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
+	// useEffect(() => {
+	// 	const getProjects = async () => {
+	// 		const url = import.meta.env.DEV
+	// 			? import.meta.env.VITE_DEV_API
+	// 			: import.meta.env.VITE_PROD_URL;
 
-			const token = localStorage.getItem("foliolinks_access_token");
-			const results = await fetch(`${url}/api/users/projects`, {
-				method: "get",
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+	// 		const token = localStorage.getItem("foliolinks_access_token");
+	// 		const results = await fetch(`${url}/api/users/projects`, {
+	// 			method: "get",
+	// 			headers: {
+	// 				Authorization: `Bearer ${token}`,
+	// 			},
+	// 		});
 
-			const json = await results.json();
-			setProjects(json.projects);
-		};
+	// 		const json = await results.json();
+	// 		setProjects(json.projects);
+	// 	};
 
-		getProjects();
-	}, []);
+	// 	getProjects();
+	// }, []);
 
-	useEffect(() => {
-		projects.forEach((project, index) => {
-			update(index, { ...project, project_id: project.id });
+	// useEffect(() => {
+	// 	projects?.forEach((project, index) => {
+	// 		update(index, { ...project, project_id: project.id });
+	// 	});
+	// }, [projects, update]);
+
+	const getProjects = async (): Promise<Project[]> => {
+		const url = import.meta.env.DEV
+			? import.meta.env.VITE_DEV_API
+			: import.meta.env.VITE_PROD_URL;
+
+		const token = localStorage.getItem("foliolinks_access_token");
+		const results = await fetch(`${url}/api/users/projects`, {
+			method: "get",
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
 		});
+
+		const json = await results.json();
+
+		return json.projects;
+	};
+
+	const { data: projects } = useQuery({
+		queryKey: ["projects"],
+		queryFn: getProjects,
+	});
+
+	useEffect(() => {
+		if (projects) {
+			projects.forEach((project, index) => {
+				update(index, { ...project, project_id: project.id });
+			});
+		}
 	}, [projects, update]);
 
 	const handleAddNewLink = () => {
@@ -121,7 +153,7 @@ const AddLinks = () => {
 			const json = await result.json();
 
 			if (json.deleted) {
-				const updated = projects.filter((p) => {
+				const updated = projects?.filter((p) => {
 					return p.id !== json.project.id;
 				});
 				setProjects(updated);
@@ -151,7 +183,8 @@ const AddLinks = () => {
 			});
 			const json = await result.json();
 
-			const updatedProjects = projects.map((project) => {
+			const updatedProjects = projects?.map((project) => {
+				// const updatedProjects = projects.map((project) => {
 				if (project.id === json.updatedProject.id) {
 					return (project = {
 						...json.updatedProject,
@@ -189,7 +222,8 @@ const AddLinks = () => {
 						{fields.length ? (
 							<>
 								{fields.map((field, index) => {
-									const existingProject = projects.find((project) => {
+									const existingProject = projects?.find((project) => {
+										// const existingProject = projects.find((project) => {
 										return project.id === field.project_id;
 									});
 									return (
