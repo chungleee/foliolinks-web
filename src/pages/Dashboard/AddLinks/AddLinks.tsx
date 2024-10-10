@@ -57,11 +57,9 @@ const AddLinks = () => {
 	});
 
 	useEffect(() => {
-		if (projects) {
-			projects.forEach((project, index) => {
-				update(index, { ...project, project_id: project.id });
-			});
-		}
+		projects?.forEach((project, index) => {
+			update(index, { ...project, project_id: project.id });
+		});
 	}, [projects, update]);
 
 	const handleAddNewLink = () => {
@@ -77,7 +75,7 @@ const AddLinks = () => {
 		ulRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
 	};
 
-	const handleSave = async (data: TCreateLinksValues) => {
+	const handleSave = (data: TCreateLinksValues) => {
 		const createProjects = data.projects.filter((project) => {
 			return !project.project_id ? project : false;
 		});
@@ -119,7 +117,11 @@ const AddLinks = () => {
 		},
 	});
 
-	const handleDelete = async (project: Project, fieldIndex: number) => {
+	const deleteProject = async (data: {
+		project: Project;
+		fieldIndex: number;
+	}) => {
+		const { project, fieldIndex } = data;
 		try {
 			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
@@ -138,17 +140,26 @@ const AddLinks = () => {
 			});
 			const json = await result.json();
 
-			if (json.deleted) {
-				const updated = projects?.filter((p) => {
-					return p.id !== json.project.id;
-				});
-				setProjects(updated);
-				remove(fieldIndex);
-			}
+			return {
+				project: json.project,
+				fieldIndex,
+			};
 		} catch (error) {
 			console.log("error: ", error);
 		}
 	};
+
+	const deleteProjectMutation = useMutation({
+		mutationFn: deleteProject,
+		onSuccess: (data) => {
+			remove(data?.fieldIndex);
+			queryClient.setQueryData(["projects"], (prevProjects: Project[]) => {
+				return prevProjects.filter((p) => {
+					return p.id !== data?.project.id;
+				});
+			});
+		},
+	});
 
 	const handleUpdateProject = async (project: Project) => {
 		try {
@@ -209,7 +220,6 @@ const AddLinks = () => {
 							<>
 								{fields.map((field, index) => {
 									const existingProject = projects?.find((project) => {
-										// const existingProject = projects.find((project) => {
 										return project.id === field.project_id;
 									});
 									return (
@@ -220,7 +230,11 @@ const AddLinks = () => {
 												existingProject={existingProject}
 												register={register}
 												remove={!existingProject ? remove : undefined}
-												handleDelete={existingProject && handleDelete}
+												handleDelete={
+													existingProject
+														? (data) => deleteProjectMutation.mutateAsync(data)
+														: undefined
+												}
 												handleUpdateProject={
 													existingProject && handleUpdateProject
 												}
