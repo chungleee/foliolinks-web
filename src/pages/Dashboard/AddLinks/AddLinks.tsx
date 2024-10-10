@@ -161,7 +161,9 @@ const AddLinks = () => {
 		},
 	});
 
-	const handleUpdateProject = async (project: Project) => {
+	const updateProject = async (
+		project: Project
+	): Promise<Project[] | undefined> => {
 		try {
 			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
@@ -178,10 +180,10 @@ const AddLinks = () => {
 					"Content-Type": "application/json",
 				},
 			});
+
 			const json = await result.json();
 
 			const updatedProjects = projects?.map((project) => {
-				// const updatedProjects = projects.map((project) => {
 				if (project.id === json.updatedProject.id) {
 					return (project = {
 						...json.updatedProject,
@@ -189,11 +191,23 @@ const AddLinks = () => {
 				}
 				return project;
 			});
-			setProjects(updatedProjects);
+
+			return updatedProjects;
 		} catch (error) {
 			console.log("error: ", error);
 		}
 	};
+
+	const updateProjectMutation = useMutation({
+		mutationFn: updateProject,
+		onSuccess: (data) => {
+			if (data) {
+				queryClient.setQueryData(["projects"], () => {
+					return [...data];
+				});
+			}
+		},
+	});
 
 	return (
 		<DashboardLayout>
@@ -236,7 +250,9 @@ const AddLinks = () => {
 														: undefined
 												}
 												handleUpdateProject={
-													existingProject && handleUpdateProject
+													existingProject
+														? (data) => updateProjectMutation.mutateAsync(data)
+														: undefined
 												}
 												control={control}
 											/>

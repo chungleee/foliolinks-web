@@ -23,7 +23,7 @@ interface LinksCardProps {
 		project: Project;
 		fieldIndex: number;
 	}) => Promise<{ project: Project; fieldIndex: number } | undefined>;
-	handleUpdateProject?: (project: Project) => Promise<void>;
+	handleUpdateProject?: (project: Project) => Promise<Project[] | undefined>;
 	control?: Control<TCreateLinksValues>;
 }
 
@@ -96,7 +96,6 @@ const LinksCard = ({
 										fieldIndex: cardIndex,
 									})
 								}
-								// onClick={() => handleDelete?.(initialProjectData, cardIndex)}
 							>
 								delete
 							</button>
