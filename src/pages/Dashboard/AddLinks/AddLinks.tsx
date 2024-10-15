@@ -10,6 +10,12 @@ import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
 import { UserContext } from "../../../contexts/UserProvider";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	createProjects,
+	deleteProject,
+	getProjects,
+	updateProject,
+} from "../../../api/projects";
 
 const AddLinks = () => {
 	const { userProfile } = useContext(UserContext);
@@ -32,24 +38,6 @@ const AddLinks = () => {
 
 	const limit = userProfile?.membership === "PRO" ? 3 : 1;
 	const limitReached = limit <= fields.length;
-
-	const getProjects = async (): Promise<Project[]> => {
-		const url = import.meta.env.DEV
-			? import.meta.env.VITE_DEV_API
-			: import.meta.env.VITE_PROD_URL;
-
-		const token = localStorage.getItem("foliolinks_access_token");
-		const results = await fetch(`${url}/api/users/projects`, {
-			method: "get",
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
-
-		const json = await results.json();
-
-		return json.projects;
-	};
 
 	const { data: projects } = useQuery({
 		queryKey: ["projects"],
@@ -85,29 +73,6 @@ const AddLinks = () => {
 		}
 	};
 
-	const createProjects = async (data: TCreateLinksValues["projects"]) => {
-		try {
-			const url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
-			const token = localStorage.getItem("foliolinks_access_token");
-
-			const result = await fetch(`${url}/api/users/projects`, {
-				method: "POST",
-				body: JSON.stringify({ projects: data }),
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-			});
-
-			const json = await result.json();
-			return json.projects;
-		} catch (error) {
-			console.log("error: ", error);
-		}
-	};
-
 	const createProjectsMutation = useMutation({
 		mutationFn: createProjects,
 		onSuccess: (data) => {
@@ -116,38 +81,6 @@ const AddLinks = () => {
 			});
 		},
 	});
-
-	const deleteProject = async (data: {
-		project: Project;
-		fieldIndex: number;
-	}) => {
-		const { project, fieldIndex } = data;
-		try {
-			const url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
-			const token = localStorage.getItem("foliolinks_access_token");
-
-			const result = await fetch(`${url}/api/users/projects/${project.id}`, {
-				method: "DELETE",
-				body: JSON.stringify({
-					project,
-				}),
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-			});
-			const json = await result.json();
-
-			return {
-				project: json.project,
-				fieldIndex,
-			};
-		} catch (error) {
-			console.log("error: ", error);
-		}
-	};
 
 	const deleteProjectMutation = useMutation({
 		mutationFn: deleteProject,
@@ -161,51 +94,21 @@ const AddLinks = () => {
 		},
 	});
 
-	const updateProject = async (
-		project: Project
-	): Promise<Project[] | undefined> => {
-		try {
-			const url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
-			const token = localStorage.getItem("foliolinks_access_token");
-
-			const result = await fetch(`${url}/api/users/projects/`, {
-				method: "PATCH",
-				body: JSON.stringify({
-					updateProject: project,
-				}),
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-			});
-
-			const json = await result.json();
-
+	const updateProjectMutation = useMutation({
+		mutationFn: updateProject,
+		onSuccess: (data) => {
+			console.log("on update success: ", data);
 			const updatedProjects = projects?.map((project) => {
-				if (project.id === json.updatedProject.id) {
+				if (project.id === data?.id) {
 					return (project = {
-						...json.updatedProject,
+						...data,
 					});
 				}
 				return project;
 			});
-
-			return updatedProjects;
-		} catch (error) {
-			console.log("error: ", error);
-		}
-	};
-
-	const updateProjectMutation = useMutation({
-		mutationFn: updateProject,
-		onSuccess: (data) => {
-			if (data) {
-				queryClient.setQueryData(["projects"], () => {
-					return [...data];
-				});
-			}
+			queryClient.setQueryData(["projects"], () => {
+				return updatedProjects;
+			});
 		},
 	});
 

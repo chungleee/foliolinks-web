@@ -23,7 +23,7 @@ interface LinksCardProps {
 		project: Project;
 		fieldIndex: number;
 	}) => Promise<{ project: Project; fieldIndex: number } | undefined>;
-	handleUpdateProject?: (project: Project) => Promise<Project[] | undefined>;
+	handleUpdateProject?: (project: Project) => Promise<Project | undefined>;
 	control?: Control<TCreateLinksValues>;
 }
 
