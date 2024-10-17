@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
+const authRoutes = ["/login", "/register"];
+
 export const useAuth = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const navigate = useNavigate();
@@ -44,6 +46,11 @@ export const useAuth = () => {
 	 */
 	useEffect(() => {
 		if (!access_token) {
+			if (authRoutes.includes(location.pathname)) {
+				navigate(location.pathname);
+				return;
+			}
+
 			setIsAuthenticated(false);
 			navigate("/login");
 			return;
@@ -62,13 +69,18 @@ export const useAuth = () => {
 		if (isExpired) {
 			refreshAccessToken();
 		}
-	}, [access_token, navigate, setIsAuthenticated, refreshAccessToken]);
+	}, [
+		access_token,
+		navigate,
+		setIsAuthenticated,
+		refreshAccessToken,
+		location.pathname,
+	]);
 
 	/**
 	 * Hide Login and Register pages if user is already authenticated by always navigating to Dashboard page if conditions are met
 	 */
 	useEffect(() => {
-		const authRoutes = ["/login", "/register"];
 		if (isAuthenticated && authRoutes.includes(location.pathname)) {
 			navigate("/dashboard");
 		}

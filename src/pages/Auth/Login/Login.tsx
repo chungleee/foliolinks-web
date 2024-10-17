@@ -1,18 +1,18 @@
 import styles from "./Login.module.scss";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TLoginFormInputs, loginSchema } from "../model";
 import TextField from "../../../components/common/TextField/TextField";
 import Button from "../../../components/common/Button/Button";
 import AuthLayout from "../AuthLayout";
 import { useAuth } from "../../../utils/hooks";
+import { useMutation } from "@tanstack/react-query";
 
 const Login: FunctionComponent = () => {
 	useAuth();
 	const navigate = useNavigate();
-	const [isPending, setIsPending] = useState(false);
 
 	const {
 		handleSubmit,
@@ -22,8 +22,7 @@ const Login: FunctionComponent = () => {
 		resolver: zodResolver(loginSchema),
 	});
 
-	const onLoginSubmit = async (data: TLoginFormInputs) => {
-		setIsPending(true);
+	const handleLogin = async (data: TLoginFormInputs) => {
 		try {
 			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
@@ -39,20 +38,30 @@ const Login: FunctionComponent = () => {
 			const json = await result.json();
 			const { access_token } = await json;
 
-			await localStorage.setItem("foliolinks_access_token", access_token);
-			await navigate("/dashboard");
+			localStorage.setItem("foliolinks_access_token", access_token);
 		} catch (error) {
 			console.log(error);
-			setIsPending(false);
-		} finally {
-			setIsPending(false);
 		}
+	};
+
+	const loginMutation = useMutation({
+		mutationFn: handleLogin,
+		onSuccess: () => {
+			navigate("/dashboard");
+		},
+		onError: (error) => {
+			console.log(error);
+		},
+	});
+
+	const onLoginSubmit = (data: TLoginFormInputs) => {
+		loginMutation.mutate(data);
 	};
 
 	return (
 		<AuthLayout>
 			<main className={styles.login_page}>
-				{isPending ? (
+				{loginMutation.isPending ? (
 					<div>LOADING</div>
 				) : (
 					<>

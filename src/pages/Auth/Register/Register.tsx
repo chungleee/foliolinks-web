@@ -6,12 +6,12 @@ import { TRegisterFormInputs, registerSchema } from "../model";
 import TextField from "../../../components/common/TextField/TextField";
 import Button from "../../../components/common/Button/Button";
 import AuthLayout from "../AuthLayout";
-import { useState } from "react";
 import { useAuth } from "../../../utils/hooks";
+import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 
 const Register = () => {
 	useAuth();
-	const [isPending, setIsPending] = useState(false);
 	const navigate = useNavigate();
 	const {
 		handleSubmit,
@@ -21,37 +21,51 @@ const Register = () => {
 		resolver: zodResolver(registerSchema),
 	});
 
-	const onRegisterSubmit = async (data: TRegisterFormInputs) => {
-		setIsPending(true);
-		try {
-			const url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
+	const [error, setError] = useState("");
 
-			const result = await fetch(`${url}/api/users/auth/register`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(data),
-				credentials: "include",
-			});
+	const handleRegister = async (data: TRegisterFormInputs) => {
+		const url = import.meta.env.DEV
+			? import.meta.env.VITE_DEV_API
+			: import.meta.env.VITE_PROD_URL;
 
-			const json = await result.json();
-			const { access_token } = await json;
+		const result = await fetch(`${url}/api/users/auth/register`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(data),
+			credentials: "include",
+		});
 
-			await localStorage.setItem("foliolinks_access_token", access_token);
-			await navigate("/dashboard");
-		} catch (error) {
-			console.log(error);
-			setIsPending(false);
-		} finally {
-			setIsPending(false);
-		}
+		const json = await result.json();
+
+		if (json.error) throw new Error(json.error);
+
+		const { access_token } = await json;
+
+		if (!access_token) throw new Error("Token not found");
+
+		localStorage.setItem("foliolinks_access_token", access_token);
+
+		return access_token;
+	};
+
+	const registerMutation = useMutation({
+		mutationFn: handleRegister,
+		onSuccess: () => {
+			navigate("/dashboard");
+		},
+		onError: (error) => {
+			setError(error.message);
+		},
+	});
+
+	const onRegisterSubmit = (data: TRegisterFormInputs) => {
+		registerMutation.mutate(data);
 	};
 
 	return (
 		<AuthLayout>
 			<main className={styles.register_page}>
-				{isPending ? (
+				{registerMutation.isPending ? (
 					<div>LOADING</div>
 				) : (
 					<>
@@ -71,6 +85,7 @@ const Register = () => {
 									label='email'
 									placeholder='e.g. alex@email.com'
 								/>
+								{error ? <small style={{ color: "red" }}>{error}</small> : null}
 								<TextField
 									{...register("password")}
 									error={errors.password}
