@@ -16,8 +16,14 @@ interface LinksCardProps {
 	errors?: FieldErrors<ProjectErrors> | undefined;
 	register?: UseFormRegister<TCreateLinksValues>;
 	existingProject?: Project;
-	handleDelete?: (project: Project, fieldIndex: number) => Promise<void>;
-	handleUpdateProject?: (project: Project) => Promise<void>;
+	handleDelete?: ({
+		project,
+		fieldIndex,
+	}: {
+		project: Project;
+		fieldIndex: number;
+	}) => Promise<{ project: Project; fieldIndex: number } | undefined>;
+	handleUpdateProject?: (project: Project) => Promise<Project | undefined>;
 	control?: Control<TCreateLinksValues>;
 }
 
@@ -84,7 +90,12 @@ const LinksCard = ({
 						)}
 						{handleDelete && initialProjectData ? (
 							<button
-								onClick={() => handleDelete?.(initialProjectData, cardIndex)}
+								onClick={() =>
+									handleDelete?.({
+										project: initialProjectData,
+										fieldIndex: cardIndex,
+									})
+								}
 							>
 								delete
 							</button>

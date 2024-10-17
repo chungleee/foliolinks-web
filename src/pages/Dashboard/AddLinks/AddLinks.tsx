@@ -1,6 +1,6 @@
 import styles from "./AddLinks.module.scss";
 import { useForm, useFieldArray } from "react-hook-form";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TCreateLinksValues, createLinkSchema } from "../model";
@@ -9,11 +9,18 @@ import LinksCard from "../../../components/LinksCard/LinksCard";
 import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
 import { UserContext } from "../../../contexts/UserProvider";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	createProjects,
+	deleteProject,
+	getProjects,
+	updateProject,
+} from "../../../api/projects";
 
 const AddLinks = () => {
 	const { userProfile } = useContext(UserContext);
-	const [projects, setProjects] = useState<Project[]>([]);
 	const ulRef = useRef<HTMLUListElement | null>(null);
+	const queryClient = useQueryClient();
 
 	const {
 		control,
@@ -32,29 +39,13 @@ const AddLinks = () => {
 	const limit = userProfile?.membership === "PRO" ? 3 : 1;
 	const limitReached = limit <= fields.length;
 
-	useEffect(() => {
-		const getProjects = async () => {
-			const url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
-
-			const token = localStorage.getItem("foliolinks_access_token");
-			const results = await fetch(`${url}/api/users/projects`, {
-				method: "get",
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-
-			const json = await results.json();
-			setProjects(json.projects);
-		};
-
-		getProjects();
-	}, []);
+	const { data: projects } = useQuery({
+		queryKey: ["projects"],
+		queryFn: getProjects,
+	});
 
 	useEffect(() => {
-		projects.forEach((project, index) => {
+		projects?.forEach((project, index) => {
 			update(index, { ...project, project_id: project.id });
 		});
 	}, [projects, update]);
@@ -72,98 +63,54 @@ const AddLinks = () => {
 		ulRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
 	};
 
-	const handleSave = async (data: TCreateLinksValues) => {
+	const handleSave = (data: TCreateLinksValues) => {
 		const createProjects = data.projects.filter((project) => {
 			return !project.project_id ? project : false;
 		});
 
-		try {
-			const url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
-			const token = localStorage.getItem("foliolinks_access_token");
-
-			const result = await fetch(`${url}/api/users/projects`, {
-				method: "POST",
-				body: JSON.stringify({ projects: createProjects }),
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-			});
-			const json = await result.json();
-			if (json.projects.length) {
-				setProjects((prev) => [...prev, ...json.projects]);
-			}
-			remove();
-		} catch (error) {
-			console.log("error: ", error);
+		if (createProjects.length) {
+			createProjectsMutation.mutate(createProjects);
 		}
 	};
 
-	const handleDelete = async (project: Project, fieldIndex: number) => {
-		try {
-			const url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
-			const token = localStorage.getItem("foliolinks_access_token");
-
-			const result = await fetch(`${url}/api/users/projects/${project.id}`, {
-				method: "DELETE",
-				body: JSON.stringify({
-					project,
-				}),
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
+	const createProjectsMutation = useMutation({
+		mutationFn: createProjects,
+		onSuccess: (data) => {
+			queryClient.setQueryData(["projects"], (prevProjects: Project[]) => {
+				return [...prevProjects, ...data];
 			});
-			const json = await result.json();
+		},
+	});
 
-			if (json.deleted) {
-				const updated = projects.filter((p) => {
-					return p.id !== json.project.id;
+	const deleteProjectMutation = useMutation({
+		mutationFn: deleteProject,
+		onSuccess: (data) => {
+			remove(data?.fieldIndex);
+			queryClient.setQueryData(["projects"], (prevProjects: Project[]) => {
+				return prevProjects.filter((p) => {
+					return p.id !== data?.project.id;
 				});
-				setProjects(updated);
-				remove(fieldIndex);
-			}
-		} catch (error) {
-			console.log("error: ", error);
-		}
-	};
-
-	const handleUpdateProject = async (project: Project) => {
-		try {
-			const url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
-			const token = localStorage.getItem("foliolinks_access_token");
-
-			const result = await fetch(`${url}/api/users/projects/`, {
-				method: "PATCH",
-				body: JSON.stringify({
-					updateProject: project,
-				}),
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
 			});
-			const json = await result.json();
+		},
+	});
 
-			const updatedProjects = projects.map((project) => {
-				if (project.id === json.updatedProject.id) {
+	const updateProjectMutation = useMutation({
+		mutationFn: updateProject,
+		onSuccess: (data) => {
+			console.log("on update success: ", data);
+			const updatedProjects = projects?.map((project) => {
+				if (project.id === data?.id) {
 					return (project = {
-						...json.updatedProject,
+						...data,
 					});
 				}
 				return project;
 			});
-			setProjects(updatedProjects);
-		} catch (error) {
-			console.log("error: ", error);
-		}
-	};
+			queryClient.setQueryData(["projects"], () => {
+				return updatedProjects;
+			});
+		},
+	});
 
 	return (
 		<DashboardLayout>
@@ -189,7 +136,7 @@ const AddLinks = () => {
 						{fields.length ? (
 							<>
 								{fields.map((field, index) => {
-									const existingProject = projects.find((project) => {
+									const existingProject = projects?.find((project) => {
 										return project.id === field.project_id;
 									});
 									return (
@@ -200,9 +147,15 @@ const AddLinks = () => {
 												existingProject={existingProject}
 												register={register}
 												remove={!existingProject ? remove : undefined}
-												handleDelete={existingProject && handleDelete}
+												handleDelete={
+													existingProject
+														? (data) => deleteProjectMutation.mutateAsync(data)
+														: undefined
+												}
 												handleUpdateProject={
-													existingProject && handleUpdateProject
+													existingProject
+														? (data) => updateProjectMutation.mutateAsync(data)
+														: undefined
 												}
 												control={control}
 											/>
