@@ -8,7 +8,7 @@ import Button from "../../../components/common/Button/Button";
 import LinksCard from "../../../components/LinksCard/LinksCard";
 import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
-import { UserContext } from "../../../contexts/UserProvider";
+import { UserContext } from "../../../contexts/UserContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
 	createProjects,
@@ -64,12 +64,12 @@ const AddLinks = () => {
 	};
 
 	const handleSave = (data: TCreateLinksValues) => {
-		const createProjects = data.projects.filter((project) => {
+		const createProjectsArray = data.projects.filter((project) => {
 			return !project.project_id ? project : false;
 		});
 
-		if (createProjects.length) {
-			createProjectsMutation.mutate(createProjects);
+		if (createProjectsArray.length) {
+			createProjectsMutation.mutate(createProjectsArray);
 		}
 	};
 

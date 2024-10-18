@@ -5,7 +5,7 @@ export const UserContext = createContext<{ userProfile: UserProfile | null }>({
 	userProfile: null,
 });
 
-const UserProvider = ({ children }: { children: ReactNode }) => {
+export const UserProvider = ({ children }: { children: ReactNode }) => {
 	const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
 	useEffect(() => {
@@ -42,5 +42,3 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
 		</UserContext.Provider>
 	);
 };
-
-export default UserProvider;

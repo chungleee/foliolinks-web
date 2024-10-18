@@ -9,7 +9,7 @@ import Register from "./pages/Auth/Register/Register.tsx";
 import Profile from "./pages/Dashboard/Profile/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ProtectedRoute from "./pages/ProtectedRoute.tsx";
-import UserProvider from "./contexts/UserProvider.tsx";
+import { UserProvider } from "./contexts/UserContext.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
