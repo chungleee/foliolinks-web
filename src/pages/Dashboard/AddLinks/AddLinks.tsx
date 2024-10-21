@@ -9,15 +9,13 @@ import LinksCard from "../../../components/LinksCard/LinksCard";
 import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
 import { UserContext } from "../../../contexts/UserContext";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteProject, updateProject } from "../../../api/projects";
 import { ProjectsContext } from "../../../contexts/ProjectsContext";
 
 const AddLinks = () => {
 	const { userProfile } = useContext(UserContext);
-	const { projects, createProjects } = useContext(ProjectsContext)!;
+	const { projects, createProjects, updateProject, deleteProject } =
+		useContext(ProjectsContext)!;
 	const ulRef = useRef<HTMLUListElement | null>(null);
-	const queryClient = useQueryClient();
 
 	const {
 		control,
@@ -65,35 +63,13 @@ const AddLinks = () => {
 		}
 	};
 
-	const deleteProjectMutation = useMutation({
-		mutationFn: deleteProject,
-		onSuccess: (data) => {
-			remove(data?.fieldIndex);
-			queryClient.setQueryData(["projects"], (prevProjects: Project[]) => {
-				return prevProjects.filter((p) => {
-					return p.id !== data?.project.id;
-				});
-			});
-		},
-	});
-
-	const updateProjectMutation = useMutation({
-		mutationFn: updateProject,
-		onSuccess: (data) => {
-			console.log("on update success: ", data);
-			const updatedProjects = projects?.map((project) => {
-				if (project.id === data?.id) {
-					return (project = {
-						...data,
-					});
-				}
-				return project;
-			});
-			queryClient.setQueryData(["projects"], () => {
-				return updatedProjects;
-			});
-		},
-	});
+	const handleDeleteProject = (data: {
+		project: Project;
+		fieldIndex: number;
+	}) => {
+		remove(data.fieldIndex);
+		deleteProject(data.project);
+	};
 
 	return (
 		<DashboardLayout>
@@ -131,13 +107,11 @@ const AddLinks = () => {
 												register={register}
 												remove={!existingProject ? remove : undefined}
 												handleDelete={
-													existingProject
-														? (data) => deleteProjectMutation.mutateAsync(data)
-														: undefined
+													existingProject ? handleDeleteProject : undefined
 												}
 												handleUpdateProject={
 													existingProject
-														? (data) => updateProjectMutation.mutateAsync(data)
+														? (data) => updateProject(data)
 														: undefined
 												}
 												control={control}

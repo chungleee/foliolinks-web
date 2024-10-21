@@ -43,17 +43,12 @@ export const createProjects = async (data: TCreateLinksValues["projects"]) => {
 	}
 };
 
-export const deleteProject = async (data: {
-	project: Project;
-	fieldIndex: number;
-}) => {
+export const deleteProject = async (project: Project) => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
 
 	const token = localStorage.getItem("foliolinks_access_token");
-
-	const { project, fieldIndex } = data;
 
 	try {
 		const result = await fetch(`${url}/api/users/projects/${project.id}`, {
@@ -70,7 +65,6 @@ export const deleteProject = async (data: {
 
 		return {
 			project: json.project,
-			fieldIndex,
 		};
 	} catch (error) {
 		console.log("error: ", error);
