@@ -9,16 +9,13 @@ import LinksCard from "../../../components/LinksCard/LinksCard";
 import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
 import { UserContext } from "../../../contexts/UserContext";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-	createProjects,
-	deleteProject,
-	getProjects,
-	updateProject,
-} from "../../../api/projects";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteProject, updateProject } from "../../../api/projects";
+import { ProjectsContext } from "../../../contexts/ProjectsContext";
 
 const AddLinks = () => {
 	const { userProfile } = useContext(UserContext);
+	const { projects, createProjects } = useContext(ProjectsContext)!;
 	const ulRef = useRef<HTMLUListElement | null>(null);
 	const queryClient = useQueryClient();
 
@@ -38,11 +35,6 @@ const AddLinks = () => {
 
 	const limit = userProfile?.membership === "PRO" ? 3 : 1;
 	const limitReached = limit <= fields.length;
-
-	const { data: projects } = useQuery({
-		queryKey: ["projects"],
-		queryFn: getProjects,
-	});
 
 	useEffect(() => {
 		projects?.forEach((project, index) => {
@@ -69,18 +61,9 @@ const AddLinks = () => {
 		});
 
 		if (createProjectsArray.length) {
-			createProjectsMutation.mutate(createProjectsArray);
+			createProjects(createProjectsArray);
 		}
 	};
-
-	const createProjectsMutation = useMutation({
-		mutationFn: createProjects,
-		onSuccess: (data) => {
-			queryClient.setQueryData(["projects"], (prevProjects: Project[]) => {
-				return [...prevProjects, ...data];
-			});
-		},
-	});
 
 	const deleteProjectMutation = useMutation({
 		mutationFn: deleteProject,

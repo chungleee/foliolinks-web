@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound.tsx";
 import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ProjectsProvider } from "./contexts/ProjectsContext.tsx";
 
 const queryClient = new QueryClient();
 
@@ -25,7 +26,9 @@ const router = createBrowserRouter([
 		element: (
 			<ProtectedRoute>
 				<UserProvider>
-					<AddLinks />
+					<ProjectsProvider>
+						<AddLinks />
+					</ProjectsProvider>
 				</UserProvider>
 			</ProtectedRoute>
 		),
@@ -35,7 +38,9 @@ const router = createBrowserRouter([
 		element: (
 			<ProtectedRoute>
 				<UserProvider>
-					<Profile />
+					<ProjectsProvider>
+						<Profile />
+					</ProjectsProvider>
 				</UserProvider>
 			</ProtectedRoute>
 		),
