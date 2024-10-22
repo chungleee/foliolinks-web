@@ -1,7 +1,7 @@
 import { Project } from "../types";
 import { TCreateLinksValues } from "../zod";
 
-export const getProjects = async (): Promise<Project[]> => {
+export const getProjectsAPI = async (): Promise<Project[]> => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
@@ -20,7 +20,9 @@ export const getProjects = async (): Promise<Project[]> => {
 	return json.projects;
 };
 
-export const createProjects = async (data: TCreateLinksValues["projects"]) => {
+export const createProjectsAPI = async (
+	data: TCreateLinksValues["projects"]
+) => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
@@ -43,7 +45,7 @@ export const createProjects = async (data: TCreateLinksValues["projects"]) => {
 	}
 };
 
-export const deleteProject = async (project: Project) => {
+export const deleteProjectAPI = async (project: Project) => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
@@ -71,7 +73,7 @@ export const deleteProject = async (project: Project) => {
 	}
 };
 
-export const updateProject = async (project: Project) => {
+export const updateProjectAPI = async (project: Project) => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
