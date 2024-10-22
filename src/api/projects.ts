@@ -1,7 +1,7 @@
 import { Project } from "../types";
 import { TCreateLinksValues } from "../zod";
 
-export const getProjects = async (): Promise<Project[]> => {
+export const getProjectsAPI = async (): Promise<Project[]> => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
@@ -20,7 +20,9 @@ export const getProjects = async (): Promise<Project[]> => {
 	return json.projects;
 };
 
-export const createProjects = async (data: TCreateLinksValues["projects"]) => {
+export const createProjectsAPI = async (
+	data: TCreateLinksValues["projects"]
+) => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
@@ -43,17 +45,12 @@ export const createProjects = async (data: TCreateLinksValues["projects"]) => {
 	}
 };
 
-export const deleteProject = async (data: {
-	project: Project;
-	fieldIndex: number;
-}) => {
+export const deleteProjectAPI = async (project: Project) => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
 
 	const token = localStorage.getItem("foliolinks_access_token");
-
-	const { project, fieldIndex } = data;
 
 	try {
 		const result = await fetch(`${url}/api/users/projects/${project.id}`, {
@@ -70,14 +67,13 @@ export const deleteProject = async (data: {
 
 		return {
 			project: json.project,
-			fieldIndex,
 		};
 	} catch (error) {
 		console.log("error: ", error);
 	}
 };
 
-export const updateProject = async (project: Project) => {
+export const updateProjectAPI = async (project: Project) => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;

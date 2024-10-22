@@ -8,19 +8,14 @@ import Button from "../../../components/common/Button/Button";
 import LinksCard from "../../../components/LinksCard/LinksCard";
 import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
-import { UserContext } from "../../../contexts/UserProvider";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-	createProjects,
-	deleteProject,
-	getProjects,
-	updateProject,
-} from "../../../api/projects";
+import { UserContext } from "../../../contexts/UserContext";
+import { ProjectsContext } from "../../../contexts/ProjectsContext";
 
 const AddLinks = () => {
 	const { userProfile } = useContext(UserContext);
+	const { projects, createProjects, updateProject, deleteProject } =
+		useContext(ProjectsContext)!;
 	const ulRef = useRef<HTMLUListElement | null>(null);
-	const queryClient = useQueryClient();
 
 	const {
 		control,
@@ -38,11 +33,6 @@ const AddLinks = () => {
 
 	const limit = userProfile?.membership === "PRO" ? 3 : 1;
 	const limitReached = limit <= fields.length;
-
-	const { data: projects } = useQuery({
-		queryKey: ["projects"],
-		queryFn: getProjects,
-	});
 
 	useEffect(() => {
 		projects?.forEach((project, index) => {
@@ -64,53 +54,22 @@ const AddLinks = () => {
 	};
 
 	const handleSave = (data: TCreateLinksValues) => {
-		const createProjects = data.projects.filter((project) => {
+		const createProjectsArray = data.projects.filter((project) => {
 			return !project.project_id ? project : false;
 		});
 
-		if (createProjects.length) {
-			createProjectsMutation.mutate(createProjects);
+		if (createProjectsArray.length) {
+			createProjects(createProjectsArray);
 		}
 	};
 
-	const createProjectsMutation = useMutation({
-		mutationFn: createProjects,
-		onSuccess: (data) => {
-			queryClient.setQueryData(["projects"], (prevProjects: Project[]) => {
-				return [...prevProjects, ...data];
-			});
-		},
-	});
-
-	const deleteProjectMutation = useMutation({
-		mutationFn: deleteProject,
-		onSuccess: (data) => {
-			remove(data?.fieldIndex);
-			queryClient.setQueryData(["projects"], (prevProjects: Project[]) => {
-				return prevProjects.filter((p) => {
-					return p.id !== data?.project.id;
-				});
-			});
-		},
-	});
-
-	const updateProjectMutation = useMutation({
-		mutationFn: updateProject,
-		onSuccess: (data) => {
-			console.log("on update success: ", data);
-			const updatedProjects = projects?.map((project) => {
-				if (project.id === data?.id) {
-					return (project = {
-						...data,
-					});
-				}
-				return project;
-			});
-			queryClient.setQueryData(["projects"], () => {
-				return updatedProjects;
-			});
-		},
-	});
+	const handleDeleteProject = (data: {
+		project: Project;
+		fieldIndex: number;
+	}) => {
+		remove(data.fieldIndex);
+		deleteProject(data.project);
+	};
 
 	return (
 		<DashboardLayout>
@@ -148,13 +107,11 @@ const AddLinks = () => {
 												register={register}
 												remove={!existingProject ? remove : undefined}
 												handleDelete={
-													existingProject
-														? (data) => deleteProjectMutation.mutateAsync(data)
-														: undefined
+													existingProject ? handleDeleteProject : undefined
 												}
 												handleUpdateProject={
 													existingProject
-														? (data) => updateProjectMutation.mutateAsync(data)
+														? (data) => updateProject(data)
 														: undefined
 												}
 												control={control}

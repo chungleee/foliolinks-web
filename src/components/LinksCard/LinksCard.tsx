@@ -22,8 +22,8 @@ interface LinksCardProps {
 	}: {
 		project: Project;
 		fieldIndex: number;
-	}) => Promise<{ project: Project; fieldIndex: number } | undefined>;
-	handleUpdateProject?: (project: Project) => Promise<Project | undefined>;
+	}) => void;
+	handleUpdateProject?: (data: Project) => void;
 	control?: Control<TCreateLinksValues>;
 }
 

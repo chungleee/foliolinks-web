@@ -6,6 +6,8 @@ export interface Project {
 	username: string;
 }
 
+export type CreateProjects = Pick<Project, "project_name" | "project_url">[];
+
 export interface ProjectErrors {
 	project_name: string;
 	project_url: string;
