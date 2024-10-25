@@ -26,7 +26,6 @@ const CreateUserAccount = () => {
 	const registerMutation = useMutation({
 		mutationFn: handleRegisterAPI,
 		onSuccess: () => {
-			// navigate("/dashboard");
 			navigate("userinfo");
 		},
 		onError: (error) => {
