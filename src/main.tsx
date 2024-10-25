@@ -12,8 +12,8 @@ import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProjectsProvider } from "./contexts/ProjectsContext.tsx";
-import CreateUserAccount from "./pages/Auth/CreateAccount/CreateAccount.tsx";
-import CreateUserInfo from "./pages/Auth/CreateUserInfo/CreateUserInfo.tsx";
+import CreateUserAccount from "./pages/Auth/Register/CreateAccount/CreateAccount.tsx";
+import CreateUserInfo from "./pages/Auth/Register/CreateUserProfile/CreateUserProfile.tsx";
 
 const queryClient = new QueryClient();
 

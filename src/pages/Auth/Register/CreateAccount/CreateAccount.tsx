@@ -2,13 +2,13 @@ import styles from "./CreateAccount.module.scss";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { TRegisterFormInputs, registerSchema } from "../model";
-import TextField from "../../../components/common/TextField/TextField";
-import Button from "../../../components/common/Button/Button";
-import { useAuth } from "../../../hooks/useAuth";
+import { TRegisterFormInputs, registerSchema } from "../../model";
+import TextField from "../../../../components/common/TextField/TextField";
+import Button from "../../../../components/common/Button/Button";
+import { useAuth } from "../../../../hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { handleRegisterAPI } from "../../../api/auth";
+import { handleRegisterAPI } from "../../../../api/auth";
 
 const CreateUserAccount = () => {
 	useAuth();
