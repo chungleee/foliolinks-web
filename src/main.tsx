@@ -12,7 +12,7 @@ import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProjectsProvider } from "./contexts/ProjectsContext.tsx";
-import CreateUserAccount from "./pages/Auth/Register/CreateAccount/CreateAccount.tsx";
+import CreateUserAccount from "./pages/Auth/Register/CreateUserAccount/CreateUserAccount.tsx";
 import CreateUserInfo from "./pages/Auth/Register/CreateUserProfile/CreateUserProfile.tsx";
 
 const queryClient = new QueryClient();

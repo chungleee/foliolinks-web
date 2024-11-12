@@ -42,7 +42,7 @@ export const userInfoSchema = z.object({
 		.toLowerCase()
 		.trim(),
 	firstName: z.string().min(1, { message: "Can't be empty" }).trim(),
-	lastName: z.string().trim().optional(),
+	lastName: z.string().min(1, { message: "Can't be empty" }).trim(),
 });
 
 export type TUserInfoInputs = z.infer<typeof userInfoSchema>;

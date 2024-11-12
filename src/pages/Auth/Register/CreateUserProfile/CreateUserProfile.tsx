@@ -1,14 +1,14 @@
 import styles from "./CreateUserProfile.module.scss";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { TUserInfoInputs, userInfoSchema } from "../../model";
 import TextField from "../../../../components/common/TextField/TextField";
 import Button from "../../../../components/common/Button/Button";
 import { useAuth } from "../../../../hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { handleRegisterAPI } from "../../../../api/auth";
+import { createUserProfileAPI } from "../../../../api/user";
 
 const CreateUserProfile = () => {
 	useAuth();
@@ -23,24 +23,19 @@ const CreateUserProfile = () => {
 
 	const [error, setError] = useState("");
 
-	// const registerMutation = useMutation({
-	// 	mutationFn: handleRegisterAPI,
-	// 	onSuccess: () => {
-	// 		navigate("userinfo");
-	// 	},
-	// 	onError: (error) => {
-	// 		setError(error.message);
-	// 	},
-	// });
+	const createUserProfileMutation = useMutation({
+		mutationFn: createUserProfileAPI,
+		onSuccess: () => navigate("/dashboard"),
+		onError: (error) => setError(error.message),
+	});
 
 	const handleSubmitUserProfile = (data: TUserInfoInputs) => {
-		console.log("user profile data: ", data);
-		navigate("/dashboard");
+		createUserProfileMutation.mutate(data);
 	};
 
 	return (
 		<main className={styles.create_userprofile_page}>
-			{false ? (
+			{createUserProfileMutation.isPending ? (
 				<div>LOADING</div>
 			) : (
 				<>

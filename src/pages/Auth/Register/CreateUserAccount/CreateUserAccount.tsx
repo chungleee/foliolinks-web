@@ -1,4 +1,4 @@
-import styles from "./CreateAccount.module.scss";
+import styles from "./CreateUserAccount.module.scss";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
