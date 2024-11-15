@@ -1,0 +1,48 @@
+@use "../../../../variables";
+
+.register_page {
+	padding-top: 3rem;
+	padding-bottom: 3rem;
+
+	section:first-of-type {
+		p {
+			color: variables.$grey;
+		}
+
+		@media (min-width: variables.$breakpoint-tablet) {
+			h2 {
+				font-size: 2rem;
+			}
+		}
+	}
+
+	button {
+		margin-top: 2rem;
+		margin-bottom: 2rem;
+		width: 100%;
+	}
+
+	section:last-of-type {
+		text-align: center;
+
+		p {
+			color: variables.$grey;
+		}
+
+		a {
+			text-decoration: none;
+			color: variables.$purple;
+		}
+	}
+
+	@media (min-width: variables.$breakpoint-tablet) {
+		border-radius: 8px;
+		border: 1px solid black;
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
+}
+
+.form_textfield {
+	margin: 1.5rem 0;
+}

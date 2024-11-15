@@ -1,43 +1,33 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, ReactNode } from "react";
 import { UserProfile } from "../types";
+// import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getUserProfileAPI } from "../api/user";
 
-export const UserContext = createContext<{ userProfile: UserProfile | null }>({
-	userProfile: null,
+interface UserContextType {
+	userProfile: UserProfile | undefined;
+	isUserPending: boolean;
+	isProfileComplete: boolean;
+}
+
+export const UserContext = createContext<UserContextType>({
+	userProfile: undefined,
+	isUserPending: true,
+	isProfileComplete: false,
 });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-	const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-
-	useEffect(() => {
-		const getUserProfile = async () => {
-			const token = localStorage.getItem("foliolinks_access_token");
-			if (!token) return;
-			try {
-				const url = import.meta.env.DEV
-					? import.meta.env.VITE_DEV_API
-					: import.meta.env.VITE_PROD_URL;
-
-				const result = await fetch(`${url}/api/users/profile/me`, {
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${token}`,
-						"Content-Type": "application/json",
-					},
-					credentials: "include",
-				});
-
-				const json = await result.json();
-				setUserProfile(json.data);
-			} catch (error) {
-				console.log(error);
-			}
-		};
-
-		getUserProfile();
-	}, []);
+	const { data, isPending: isUserPending } = useQuery({
+		queryKey: ["userProfile"],
+		queryFn: getUserProfileAPI,
+	});
+	const { username, firstName, lastName } = data || {};
+	const isProfileComplete = !!username || !!firstName || !!lastName;
 
 	return (
-		<UserContext.Provider value={{ userProfile }}>
+		<UserContext.Provider
+			value={{ userProfile: data, isUserPending, isProfileComplete }}
+		>
 			{children}
 		</UserContext.Provider>
 	);
