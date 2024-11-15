@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import styles from "./Profile.module.scss";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,8 +7,12 @@ import TextField from "../../../components/common/TextField/TextField";
 import Button from "../../../components/common/Button/Button";
 import Icon from "../../../components/common/Icon";
 import DashboardLayout from "../DashboardLayout";
+import { UserContext } from "../../../contexts/UserContext";
 
 const Profile = () => {
+	const { userProfile, isProfileComplete } = useContext(UserContext);
+	const { username, firstName, lastName, email } = userProfile ?? {};
+
 	const [previewImg, setPreviewImg] = useState<string>("");
 	const labelRef = useRef<HTMLLabelElement>(null);
 
@@ -105,6 +109,8 @@ const Profile = () => {
 							{...register("username")}
 							error={errors.firstName}
 							placeholder='John'
+							disabled={isProfileComplete}
+							defaultValue={username}
 						/>
 						<TextField
 							labelClassName={styles.textfields_layout}
@@ -114,6 +120,8 @@ const Profile = () => {
 							{...register("firstName")}
 							error={errors.firstName}
 							placeholder='John'
+							disabled={isProfileComplete}
+							defaultValue={firstName}
 						/>
 						<TextField
 							labelClassName={styles.textfields_layout}
@@ -123,6 +131,8 @@ const Profile = () => {
 							{...register("lastName")}
 							error={errors.lastName}
 							placeholder='Doe'
+							disabled={isProfileComplete}
+							defaultValue={lastName}
 						/>
 						<TextField
 							labelClassName={styles.textfields_layout}
@@ -132,6 +142,8 @@ const Profile = () => {
 							{...register("email")}
 							error={errors.email}
 							placeholder='e.g. johndoe@email.com'
+							disabled={isProfileComplete}
+							defaultValue={email}
 						/>
 					</div>
 
@@ -140,6 +152,7 @@ const Profile = () => {
 							onClick={handleSubmit(handleSave)}
 							variant='default'
 							type='submit'
+							disabled={isProfileComplete}
 						>
 							Save
 						</Button>
