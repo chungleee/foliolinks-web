@@ -24,7 +24,7 @@ const Profile = () => {
 	const handleSave = async (data: TProfileFormValues) => {
 		console.log("form data: ", data);
 		try {
-			let url = import.meta.env.DEV
+			const url = import.meta.env.DEV
 				? import.meta.env.VITE_DEV_API
 				: import.meta.env.VITE_PROD_URL;
 

@@ -45,7 +45,6 @@ export const createUserProfileAPI = async (
 				Authorization: `Bearer ${token}`,
 				"Content-Type": "application/json",
 			},
-			// credentials: "include",
 		});
 		const json = await result.json();
 		if (json.error) throw new Error(json.error);

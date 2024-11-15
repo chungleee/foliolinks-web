@@ -10,12 +10,15 @@ import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
 import { UserContext } from "../../../contexts/UserContext";
 import { ProjectsContext } from "../../../contexts/ProjectsContext";
+import { useNavigate } from "react-router-dom";
 
 const AddLinks = () => {
-	const { userProfile } = useContext(UserContext);
+	const { userProfile, isProfileComplete } = useContext(UserContext);
 	const { projects, createProjects, updateProject, deleteProject } =
 		useContext(ProjectsContext)!;
 	const ulRef = useRef<HTMLUListElement | null>(null);
+	const dialogRef = useRef<HTMLDialogElement | null>(null);
+	const navigate = useNavigate();
 
 	const {
 		control,
@@ -33,6 +36,12 @@ const AddLinks = () => {
 
 	const limit = userProfile?.membership === "PRO" ? 3 : 1;
 	const limitReached = limit <= fields.length;
+
+	useEffect(() => {
+		if (!isProfileComplete) {
+			dialogRef.current?.showModal();
+		}
+	}, [isProfileComplete]);
 
 	useEffect(() => {
 		projects?.forEach((project, index) => {
@@ -71,9 +80,27 @@ const AddLinks = () => {
 		deleteProject(data.project);
 	};
 
+	const handleCloseDialog = () => {
+		dialogRef.current?.close();
+	};
+
 	return (
 		<DashboardLayout>
 			<div className={styles.dashboard}>
+				{isProfileComplete === false && (
+					<dialog ref={dialogRef}>
+						<h1>Please complete your profile</h1>
+						<Button
+							variant='default'
+							onClick={() => navigate("/dashboard/profile")}
+						>
+							Profile
+						</Button>
+						<Button variant='secondary' onClick={handleCloseDialog}>
+							Skip
+						</Button>
+					</dialog>
+				)}
 				<section>
 					<p>
 						Add/edit/remove links below and then share all your links with the
