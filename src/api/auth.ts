@@ -1,5 +1,9 @@
 import { TLoginFormInputs, TRegisterFormInputs } from "../pages/Auth/model";
 
+const url = import.meta.env.DEV
+	? import.meta.env.VITE_DEV_API
+	: import.meta.env.VITE_PROD_URL;
+
 export const handleLoginAPI = async (data: TLoginFormInputs) => {
 	try {
 		const url = import.meta.env.DEV
@@ -46,4 +50,23 @@ export const handleRegisterAPI = async (data: TRegisterFormInputs) => {
 	localStorage.setItem("foliolinks_access_token", access_token);
 
 	return access_token;
+};
+
+export const handleLogoutAPI = async () => {
+	const token = localStorage.getItem("foliolinks_access_token");
+
+	const result = await fetch(`${url}/api/users/auth/logout`, {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+
+	const json = await result.json();
+
+	if (json.loggedOut) {
+		localStorage.removeItem("foliolinks_access_token");
+	}
+
+	return json;
 };
