@@ -16,9 +16,13 @@
 		.right_logo {
 			margin-left: auto;
 			border-radius: 8px;
-			border: 1px solid variables.$purple;
 			display: flex;
 			align-items: center;
+
+			span {
+				border: 1px solid variables.$purple;
+				cursor: pointer;
+			}
 
 			p {
 				display: none;

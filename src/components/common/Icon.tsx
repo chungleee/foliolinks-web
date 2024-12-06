@@ -8,6 +8,7 @@ import {
 	FiEye,
 	FiZap,
 	FiImage,
+	FiLogOut,
 } from "react-icons/fi";
 
 type Variants =
@@ -19,7 +20,8 @@ type Variants =
 	| "user"
 	| "eye"
 	| "zap"
-	| "image";
+	| "image"
+	| "logout";
 
 interface IconProps {
 	variant?: Variants;
@@ -55,6 +57,10 @@ const Icon = ({ variant, ...props }: IconProps) => {
 
 		case "image": {
 			return <FiImage {...props} />;
+		}
+
+		case "logout": {
+			return <FiLogOut {...props} />;
 		}
 
 		default: {

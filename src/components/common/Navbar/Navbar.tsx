@@ -1,9 +1,11 @@
 import { ReactNode } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.scss";
 import LogoBanner from "../LogoBanner/LogoBanner";
 import CustomLink from "../CustomLink/CustomLink";
 import Icon from "../Icon";
+import { useMutation } from "@tanstack/react-query";
+import { handleLogoutAPI } from "../../../api/auth";
 
 interface NavbarProps {
 	className?: string;
@@ -13,8 +15,17 @@ interface NavbarProps {
 		icon?: ReactNode;
 	}[];
 }
+
 const Navbar = ({ navigationLinks, className }: NavbarProps) => {
 	const pathname = useLocation().pathname;
+	const navigate = useNavigate();
+
+	const logoutMutation = useMutation({
+		mutationFn: handleLogoutAPI,
+		onSuccess: () => {
+			navigate("/login");
+		},
+	});
 
 	return (
 		<nav className={`${styles.navbar} ${className}`}>
@@ -32,10 +43,20 @@ const Navbar = ({ navigationLinks, className }: NavbarProps) => {
 						</CustomLink>
 					);
 				})}
-				<span className={`${styles.right_logo} ${styles.navbar_logos}`}>
-					<Icon variant='eye' />
-					<p>preview</p>
-				</span>
+				<div className={`${styles.right_logo}`}>
+					<span className={`${styles.right_logo} ${styles.navbar_logos}`}>
+						<Icon variant='eye' />
+						<p>preview</p>
+					</span>
+					<span
+						onClick={() => logoutMutation.mutate()}
+						className={`${styles.right_logo} ${styles.navbar_logos}
+					`}
+					>
+						<Icon variant='logout' />
+						<p>logout</p>
+					</span>
+				</div>
 			</div>
 		</nav>
 	);
