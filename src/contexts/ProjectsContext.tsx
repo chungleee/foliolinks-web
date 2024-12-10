@@ -1,4 +1,4 @@
-import { createContext, ReactNode } from "react";
+import { createContext, ReactNode, useContext } from "react";
 import { CreateProjects, Project } from "../types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -7,6 +7,7 @@ import {
 	getProjectsAPI,
 	updateProjectAPI,
 } from "../api/projects";
+import { UserContext } from "./UserContext";
 
 interface ProjectsContextType {
 	projects: Project[] | undefined;
@@ -21,17 +22,21 @@ export const ProjectsContext = createContext<ProjectsContextType | undefined>(
 );
 
 export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
+	const { userProfile } = useContext(UserContext);
 	const queryClient = useQueryClient();
 
+	const id = userProfile?.id;
+
 	const { data: projects, isLoading: isProjectsLoading } = useQuery({
-		queryKey: ["projects"],
+		queryKey: ["projects", id],
 		queryFn: getProjectsAPI,
+		enabled: !!id,
 	});
 
 	const createProjectsMutation = useMutation({
 		mutationFn: createProjectsAPI,
 		onSuccess: (data) => {
-			queryClient.setQueryData(["projects"], (prevProjects: Project[]) => {
+			queryClient.setQueryData(["projects", id], (prevProjects: Project[]) => {
 				return [...prevProjects, ...data];
 			});
 		},
@@ -48,7 +53,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
 				}
 				return project;
 			});
-			queryClient.setQueryData(["projects"], () => {
+			queryClient.setQueryData(["projects", id], () => {
 				return updatedProjects;
 			});
 		},
@@ -57,7 +62,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
 	const deleteProjectMutation = useMutation({
 		mutationFn: deleteProjectAPI,
 		onSuccess: (data) => {
-			queryClient.setQueryData(["projects"], (prevProjects: Project[]) => {
+			queryClient.setQueryData(["projects", id], (prevProjects: Project[]) => {
 				return prevProjects.filter((p) => {
 					return p.id !== data?.project.id;
 				});

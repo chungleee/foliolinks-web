@@ -14,8 +14,13 @@ import { useNavigate } from "react-router-dom";
 
 const AddLinks = () => {
 	const { userProfile, isProfileComplete } = useContext(UserContext);
-	const { projects, createProjects, updateProject, deleteProject } =
-		useContext(ProjectsContext)!;
+	const {
+		projects,
+		createProjects,
+		updateProject,
+		deleteProject,
+		isProjectsLoading,
+	} = useContext(ProjectsContext)!;
 	const ulRef = useRef<HTMLUListElement | null>(null);
 	const dialogRef = useRef<HTMLDialogElement | null>(null);
 	const navigate = useNavigate();
@@ -25,6 +30,7 @@ const AddLinks = () => {
 		handleSubmit,
 		register,
 		formState: { errors },
+		reset,
 	} = useForm<TCreateLinksValues>({
 		resolver: zodResolver(createLinkSchema),
 	});
@@ -44,10 +50,13 @@ const AddLinks = () => {
 	}, [isProfileComplete]);
 
 	useEffect(() => {
-		projects?.forEach((project, index) => {
-			update(index, { ...project, project_id: project.id });
-		});
-	}, [projects, update]);
+		if (projects) {
+			projects.forEach((project, index) => {
+				update(index, { ...project, project_id: project.id });
+			});
+		}
+		return () => reset();
+	}, [projects, update, reset]);
 
 	const handleAddNewLink = () => {
 		if (limitReached) {
@@ -118,6 +127,7 @@ const AddLinks = () => {
 				</section>
 
 				<section className={styles.dashboard_create__container}>
+					{isProjectsLoading && <h1>Loading...</h1>}
 					<ul ref={ulRef}>
 						{fields.length ? (
 							<>
