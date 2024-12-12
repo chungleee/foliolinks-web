@@ -29,8 +29,8 @@ const AddLinks = () => {
 		control,
 		handleSubmit,
 		register,
-		formState: { errors },
 		reset,
+		formState: { errors },
 	} = useForm<TCreateLinksValues>({
 		resolver: zodResolver(createLinkSchema),
 	});
@@ -51,12 +51,12 @@ const AddLinks = () => {
 
 	useEffect(() => {
 		if (projects) {
+			reset();
 			projects.forEach((project, index) => {
 				update(index, { ...project, project_id: project.id });
 			});
 		}
-		return () => reset();
-	}, [projects, update, reset]);
+	}, [reset, projects, update]);
 
 	const handleAddNewLink = () => {
 		if (limitReached) {
