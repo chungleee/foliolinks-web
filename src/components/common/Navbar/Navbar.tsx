@@ -4,7 +4,7 @@ import styles from "./Navbar.module.scss";
 import LogoBanner from "../LogoBanner/LogoBanner";
 import CustomLink from "../CustomLink/CustomLink";
 import Icon from "../Icon";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { handleLogoutAPI } from "../../../api/auth";
 
 interface NavbarProps {
@@ -19,10 +19,12 @@ interface NavbarProps {
 const Navbar = ({ navigationLinks, className }: NavbarProps) => {
 	const pathname = useLocation().pathname;
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 
 	const logoutMutation = useMutation({
 		mutationFn: handleLogoutAPI,
 		onSuccess: () => {
+			queryClient.clear();
 			navigate("/login");
 		},
 	});
