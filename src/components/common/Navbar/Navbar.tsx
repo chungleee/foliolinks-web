@@ -46,7 +46,7 @@ const Navbar = ({ navigationLinks, className }: NavbarProps) => {
 					);
 				})}
 				<div className={`${styles.right_logo}`}>
-					<Link to='/dashboard/profile/preview'>
+					<Link to='/dashboard/preview'>
 						<span className={`${styles.right_logo} ${styles.navbar_logos}`}>
 							<Icon variant='eye' />
 							<p>preview</p>

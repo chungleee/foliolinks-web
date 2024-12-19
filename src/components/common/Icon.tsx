@@ -4,6 +4,7 @@ import {
 	FiLock,
 	FiArrowDown,
 	FiArrowUp,
+	FiArrowRight,
 	FiUser,
 	FiEye,
 	FiZap,
@@ -17,6 +18,7 @@ type Variants =
 	| "lock"
 	| "down-arrow"
 	| "up-arrow"
+	| "right-arrow"
 	| "user"
 	| "eye"
 	| "zap"
@@ -44,6 +46,9 @@ const Icon = ({ variant, ...props }: IconProps) => {
 		}
 		case "up-arrow": {
 			return <FiArrowUp {...props} />;
+		}
+		case "right-arrow": {
+			return <FiArrowRight {...props} />;
 		}
 		case "user": {
 			return <FiUser {...props} />;

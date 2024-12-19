@@ -4,7 +4,7 @@ import styles from "./Profile.module.scss";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TProfileFormValues, profileSchema } from "../model";
 import TextField from "../../../components/common/TextField/TextField";
-import Button from "../../../components/common/Button/Button";
+import { Button } from "../../../components/common/Button/Button";
 import Icon from "../../../components/common/Icon";
 import DashboardLayout from "../DashboardLayout";
 import { UserContext } from "../../../contexts/UserContext";

@@ -15,7 +15,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProjectsProvider } from "./contexts/ProjectsContext.tsx";
 import CreateUserAccount from "./pages/Auth/Register/CreateUserAccount/CreateUserAccount.tsx";
 import CreateUserInfo from "./pages/Auth/Register/CreateUserProfile/CreateUserProfile.tsx";
-import Preview from "./pages/Preview/Preview.tsx";
+import Preview from "./pages/Dashboard/Preview/Preview.tsx";
 
 const queryClient = new QueryClient();
 
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
 		),
 	},
 	{
-		path: "/dashboard/profile/preview",
+		path: "/dashboard/preview",
 		element: (
 			<ProtectedRoute>
 				<UserProvider>

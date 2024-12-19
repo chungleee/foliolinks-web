@@ -5,7 +5,7 @@ import { FunctionComponent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TLoginFormInputs, loginSchema } from "../model";
 import TextField from "../../../components/common/TextField/TextField";
-import Button from "../../../components/common/Button/Button";
+import { Button } from "../../../components/common/Button/Button";
 import AuthLayout from "../AuthLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
