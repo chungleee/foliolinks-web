@@ -23,30 +23,34 @@ const Preview = () => {
 
 	return (
 		<div className={styles.preview}>
-			<nav className={styles.preview_nav}>
-				<Button variant='secondary'>
-					<Link to='/'>Return to Dashboard</Link>
-				</Button>
-				<Button onClick={handleCopyToClipboard}>Share Link</Button>
-			</nav>
+			<div className={styles.preview_nav_container}>
+				<nav className={styles.preview_nav}>
+					<Button variant='secondary'>
+						<Link to='/'>Return to Dashboard</Link>
+					</Button>
+					<Button onClick={handleCopyToClipboard}>Share Link</Button>
+				</nav>
+			</div>
 
-			<section className={styles.user_bio}>
-				<div className={styles.user_bio_avatar}>
-					<img alt='avatar' />
-				</div>
-				<div className={styles.user_bio_description}>
-					<h4>{`${email}`}</h4>
-					<h1>{`${firstName} ${lastName}`}</h1>
-				</div>
-			</section>
+			<main>
+				<section className={styles.user_bio}>
+					<div className={styles.user_bio_avatar}>
+						<img alt='avatar' />
+					</div>
+					<div className={styles.user_bio_description}>
+						<h4>{`${email}`}</h4>
+						<h1>{`${firstName} ${lastName}`}</h1>
+					</div>
+				</section>
 
-			<section className={styles.user_projects}>
-				<ul>
-					{projects?.map((project) => {
-						return <ProjectLink key={project.id} project={project} />;
-					})}
-				</ul>
-			</section>
+				<section className={styles.user_projects}>
+					<ul>
+						{projects?.map((project) => {
+							return <ProjectLink key={project.id} project={project} />;
+						})}
+					</ul>
+				</section>
+			</main>
 		</div>
 	);
 };
