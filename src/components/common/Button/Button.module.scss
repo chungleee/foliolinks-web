@@ -1,7 +1,7 @@
 @use "../../../variables";
 
 %button {
-	min-width: 227px;
+	width: 100%;
 	min-height: 46px;
 	border-style: none;
 	border-radius: 0.5rem;
@@ -54,4 +54,8 @@
 	padding-left: 1rem;
 	padding-right: 1rem;
 	text-transform: capitalize;
+
+	* {
+		color: variables.$white;
+	}
 }

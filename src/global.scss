@@ -9,6 +9,14 @@ body {
 	color: variables.$dark-grey;
 }
 
+a {
+	text-decoration: none;
+}
+
+a:visited {
+	color: inherit;
+}
+
 p {
 	margin: 0;
 }
