@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 
 import styles from "./Preview.module.scss";
@@ -8,8 +8,10 @@ import ProjectLink from "../../../components/common/ProjectLink/ProjectLink";
 import { UserContext } from "../../../contexts/UserContext";
 import { ProjectsContext } from "../../../contexts/ProjectsContext";
 import { Button } from "../../../components/common/Button/Button";
+import Snackbar from "../../../components/common/Snackbar/Snackbar";
 
 const Preview = () => {
+	const [showSnackbar, setShowSnackbar] = useState(false);
 	const { userProfile } = useContext(UserContext);
 	const { projects, isProjectsLoading } = useContext(ProjectsContext)!;
 
@@ -17,6 +19,13 @@ const Preview = () => {
 
 	const handleCopyToClipboard = async () => {
 		await navigator.clipboard.writeText("testcopytoclipboard.com");
+		setShowSnackbar(true);
+
+		setTimeout(() => setShowSnackbar(false), 3000);
+	};
+
+	const handleOnClose = () => {
+		setShowSnackbar(false);
 	};
 
 	if (isProjectsLoading) return <h1>Loading...</h1>;
@@ -51,6 +60,12 @@ const Preview = () => {
 					</ul>
 				</section>
 			</main>
+			{showSnackbar && (
+				<Snackbar
+					message='Successfully copied!'
+					handleOnClose={handleOnClose}
+				/>
+			)}
 		</div>
 	);
 };
