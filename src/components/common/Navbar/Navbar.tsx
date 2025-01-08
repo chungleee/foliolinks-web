@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.scss";
 import LogoBanner from "../LogoBanner/LogoBanner";
 import CustomLink from "../CustomLink/CustomLink";
@@ -46,10 +46,12 @@ const Navbar = ({ navigationLinks, className }: NavbarProps) => {
 					);
 				})}
 				<div className={`${styles.right_logo}`}>
-					<span className={`${styles.right_logo} ${styles.navbar_logos}`}>
-						<Icon variant='eye' />
-						<p>preview</p>
-					</span>
+					<Link to='/dashboard/preview'>
+						<span className={`${styles.right_logo} ${styles.navbar_logos}`}>
+							<Icon variant='eye' />
+							<p>preview</p>
+						</span>
+					</Link>
 					<span
 						onClick={() => logoutMutation.mutate()}
 						className={`${styles.right_logo} ${styles.navbar_logos}

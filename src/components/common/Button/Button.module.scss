@@ -1,7 +1,7 @@
 @use "../../../variables";
 
 %button {
-	min-width: 227px;
+	width: 100%;
 	min-height: 46px;
 	border-style: none;
 	border-radius: 0.5rem;
@@ -39,5 +39,23 @@
 		border-color: variables.$purple-hover;
 		color: variables.$purple-hover;
 		cursor: not-allowed;
+	}
+}
+
+.project_button {
+	@extend %button;
+
+	align-items: center;
+	background-color: variables.$black;
+	color: variables.$white;
+	display: flex;
+	font-weight: 400;
+	justify-content: space-between;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	text-transform: capitalize;
+
+	* {
+		color: variables.$white;
 	}
 }

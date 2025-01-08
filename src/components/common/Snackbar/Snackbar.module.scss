@@ -1,0 +1,39 @@
+@use "../../../variables";
+
+.snackbar {
+	bottom: 20px;
+	background-color: variables.$dark-grey;
+	border-radius: 20px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	color: variables.$white;
+	left: 50%;
+	padding: 1.5rem 2rem;
+	position: fixed;
+	max-width: 90dvw;
+	transform: translate(-50%, -50%);
+	word-wrap: break-word;
+	z-index: 1000;
+	animation: fadeInOut 0.5s ease-in-out;
+
+	button {
+		position: absolute;
+		top: -0.5rem;
+		right: -0.5rem;
+		width: 25px;
+		height: 25px;
+		background-color: variables.$white;
+		border: 1px solid black;
+		border-radius: 50%;
+		color: variables.$black;
+		cursor: pointer;
+	}
+
+	@keyframes fadeInOut {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+}

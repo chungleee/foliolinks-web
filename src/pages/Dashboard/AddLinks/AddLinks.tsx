@@ -4,7 +4,7 @@ import { useContext, useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TCreateLinksValues, createLinkSchema } from "../model";
-import Button from "../../../components/common/Button/Button";
+import { Button } from "../../../components/common/Button/Button";
 import LinksCard from "../../../components/LinksCard/LinksCard";
 import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";

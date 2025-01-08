@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { TUserInfoInputs, userInfoSchema } from "../../model";
 import TextField from "../../../../components/common/TextField/TextField";
-import Button from "../../../../components/common/Button/Button";
+import { Button } from "../../../../components/common/Button/Button";
 import { useAuth } from "../../../../hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
