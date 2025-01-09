@@ -29,7 +29,6 @@ export const getUserProfileAPI = async (): Promise<UserProfile | undefined> => {
 export const createUserProfileAPI = async (
 	data: Pick<UserProfile, "username" | "firstName" | "lastName">
 ): Promise<UserProfile | undefined> => {
-	console.log("data: ", data);
 	const token = localStorage.getItem("foliolinks_access_token");
 	if (!token) return;
 
@@ -50,6 +49,6 @@ export const createUserProfileAPI = async (
 		if (json.error) throw new Error(json.error);
 		return json.data;
 	} catch (error) {
-		console.log(error);
+		if (error instanceof Error) throw new Error(error.message);
 	}
 };
