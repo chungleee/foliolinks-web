@@ -5,13 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { TUserInfoInputs, userInfoSchema } from "../../model";
 import TextField from "../../../../components/common/TextField/TextField";
 import { Button } from "../../../../components/common/Button/Button";
-import { useAuth } from "../../../../hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { createUserProfileAPI } from "../../../../api/user";
 
 const CreateUserProfile = () => {
-	useAuth();
 	const navigate = useNavigate();
 	const {
 		handleSubmit,

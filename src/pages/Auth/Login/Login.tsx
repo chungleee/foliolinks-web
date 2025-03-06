@@ -7,12 +7,10 @@ import { TLoginFormInputs, loginSchema } from "../model";
 import TextField from "../../../components/common/TextField/TextField";
 import { Button } from "../../../components/common/Button/Button";
 import AuthLayout from "../AuthLayout";
-import { useAuth } from "../../../hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import { handleLoginAPI } from "../../../api/auth";
 
 const Login: FunctionComponent = () => {
-	useAuth();
 	const navigate = useNavigate();
 
 	const {
