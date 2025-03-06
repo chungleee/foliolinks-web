@@ -16,58 +16,62 @@ import { ProjectsProvider } from "./contexts/ProjectsContext.tsx";
 import CreateUserAccount from "./pages/Auth/Register/CreateUserAccount/CreateUserAccount.tsx";
 import CreateUserInfo from "./pages/Auth/Register/CreateUserProfile/CreateUserProfile.tsx";
 import Preview from "./pages/Dashboard/Preview/Preview.tsx";
+import AuthLayout from "./layout/AuthLayout.tsx";
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
-	{ path: "*", element: <NotFound /> },
 	{
 		path: "/",
-		element: <App />,
-	},
-	{
-		path: "/dashboard",
-		element: (
-			<ProtectedRoute>
-				<UserProvider>
-					<ProjectsProvider>
-						<AddLinks />
-					</ProjectsProvider>
-				</UserProvider>
-			</ProtectedRoute>
-		),
-	},
-	{
-		path: "/dashboard/profile",
-		element: (
-			<ProtectedRoute>
-				<UserProvider>
-					<ProjectsProvider>
-						<Profile />
-					</ProjectsProvider>
-				</UserProvider>
-			</ProtectedRoute>
-		),
-	},
-	{
-		path: "/dashboard/preview",
-		element: (
-			<ProtectedRoute>
-				<UserProvider>
-					<ProjectsProvider>
-						<Preview />
-					</ProjectsProvider>
-				</UserProvider>
-			</ProtectedRoute>
-		),
-	},
-	{ path: "/login", element: <Login /> },
-	{
-		path: "/register",
-		element: <Register />,
+		element: <AuthLayout />,
 		children: [
-			{ path: "", element: <CreateUserAccount /> },
-			{ path: "userinfo", element: <CreateUserInfo /> },
+			{ path: "*", element: <NotFound /> },
+			{ index: true, element: <App /> },
+			{
+				path: "/dashboard",
+				element: (
+					<ProtectedRoute>
+						<UserProvider>
+							<ProjectsProvider>
+								<AddLinks />
+							</ProjectsProvider>
+						</UserProvider>
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: "/dashboard/profile",
+				element: (
+					<ProtectedRoute>
+						<UserProvider>
+							<ProjectsProvider>
+								<Profile />
+							</ProjectsProvider>
+						</UserProvider>
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: "/dashboard/preview",
+				element: (
+					<ProtectedRoute>
+						<UserProvider>
+							<ProjectsProvider>
+								<Preview />
+							</ProjectsProvider>
+						</UserProvider>
+					</ProtectedRoute>
+				),
+			},
+			{ path: "/login", element: <Login /> },
+			{
+				path: "/register",
+				element: <Register />,
+				children: [
+					{ path: "", element: <CreateUserAccount /> },
+					{ path: "userinfo", element: <CreateUserInfo /> },
+				],
+			},
 		],
 	},
 ]);
