@@ -1,0 +1,11 @@
+@use "../../../variables";
+
+.settings {
+	padding: 1.5rem;
+
+	&__intro {
+		p {
+			color: variables.$grey;
+		}
+	}
+}
