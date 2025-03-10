@@ -64,24 +64,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				navigate(location.pathname);
 				return;
 			}
-
 			setIsAuthenticated(false);
 			navigate("/login");
 			return;
 		}
+		try {
+			const { exp } = jwtDecode(access_token) as { exp: number };
+			const expiryDate = new Date(exp * 1000);
+			const currentDate = new Date();
+			const isExpired = currentDate > expiryDate;
 
-		const { exp } = jwtDecode(access_token) as { exp: number };
-		const expiryDate = new Date(exp * 1000);
-		const currentDate = new Date();
-		const isExpired = currentDate > expiryDate;
+			if (!isExpired) {
+				setIsAuthenticated(true);
+				return;
+			}
 
-		if (!isExpired) {
-			setIsAuthenticated(true);
-			return;
-		}
-
-		if (isExpired) {
-			refreshAccessToken();
+			if (isExpired) {
+				refreshAccessToken();
+			}
+		} catch (error) {
+			console.error(error);
+			navigate("/login");
 		}
 	}, [
 		access_token,
@@ -99,17 +102,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			navigate("/dashboard");
 		}
 
-		if (!access_token) return;
+		if (!access_token) return navigate("/login");
 
-		const { exp } = jwtDecode(access_token) as { exp: number };
-		const expiryDate = new Date(exp * 1000);
-		const tenMinutesInMs = 10 * 60 * 1000;
-		const tenMinBeforeExpiry = expiryDate.getTime() - tenMinutesInMs;
-		const delay = Math.max(0, tenMinBeforeExpiry - Date.now());
+		let silentRefreshTimeout: number;
+		try {
+			const { exp } = jwtDecode(access_token) as { exp: number };
+			const expiryDate = new Date(exp * 1000);
+			const tenMinutesInMs = 10 * 60 * 1000;
+			const tenMinBeforeExpiry = expiryDate.getTime() - tenMinutesInMs;
+			const delay = Math.max(0, tenMinBeforeExpiry - Date.now());
 
-		const silentRefreshTimeout = setTimeout(async () => {
-			await refreshAccessToken();
-		}, delay);
+			silentRefreshTimeout = setTimeout(async () => {
+				await refreshAccessToken();
+			}, delay);
+		} catch (error) {
+			console.error(error);
+			navigate("/login");
+		}
+
 		return () => {
 			clearTimeout(silentRefreshTimeout);
 		};
