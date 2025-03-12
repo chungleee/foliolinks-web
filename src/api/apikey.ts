@@ -32,3 +32,34 @@ export const generateApiKeyAPI = async (domain: string): Promise<Apikey> => {
 	const json = await results.json();
 	return json;
 };
+
+export const getApiKeyAPI = async (): Promise<Pick<Apikey, "apiKey">> => {
+	const url = import.meta.env.DEV
+		? import.meta.env.VITE_DEV_API
+		: import.meta.env.VITE_PROD_URL;
+
+	const token = localStorage.getItem("foliolinks_access_token");
+
+	const results = await fetch(`${url}/api/apikey/get-api-key`, {
+		method: "get",
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+
+	if (!results.ok) {
+		let error = `Request failed with status ${results.status}`;
+		try {
+			const errorJson = await results.json();
+			if (error && errorJson) {
+				error = errorJson.message;
+			}
+		} catch (error) {
+			console.log(error);
+		}
+		throw new Error(error);
+	}
+
+	const json = await results.json();
+	return json;
+};
