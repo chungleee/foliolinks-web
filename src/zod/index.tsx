@@ -55,3 +55,16 @@ export const profileSchema = z.object({
 });
 
 export type TProfileFormValues = z.infer<typeof profileSchema>;
+
+// API key form
+export const apikeyFormSchema = z.object({
+	domain: z
+		.string()
+		.min(1, { message: "Field is required" })
+		.url()
+		.trim()
+		.toLowerCase(),
+	apikey: z.string().optional().readonly(),
+});
+
+export type TApikeyFormValues = z.infer<typeof apikeyFormSchema>;
