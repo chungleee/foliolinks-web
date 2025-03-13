@@ -22,4 +22,12 @@
 			column-gap: 0.5rem;
 		}
 	}
+
+	.success {
+		color: green;
+	}
+
+	.error {
+		color: variables.$red;
+	}
 }

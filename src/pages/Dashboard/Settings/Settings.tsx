@@ -2,23 +2,28 @@ import styles from "./Settings.module.scss";
 import DashboardLayout from "../DashboardLayout";
 import TextField from "../../../components/common/TextField/TextField";
 import { Button } from "../../../components/common/Button/Button";
-import { generateApiKeyAPI } from "../../../api/apikey";
+import { generateApiKeyAPI, revokeApiKeyAPI } from "../../../api/apikey";
 import { useForm } from "react-hook-form";
 import { apikeyFormSchema, TApikeyFormValues } from "../../../zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 
 const Settings = () => {
+	const [revokeMsg, setRevokeMsg] = useState<{
+		success?: string;
+		error?: string;
+	}>({ success: "", error: "" });
 	const { userApiKey } = useContext(UserContext);
-	const { key: apiKey, id: apikeyId, domain, isRevoked } = userApiKey || {};
+	const { apiKey, apikeyId, domain, isRevoked } = userApiKey || {};
 	const {
 		handleSubmit,
 		register,
 		formState: { errors },
 		setError,
 		setValue,
+		reset,
 	} = useForm<TApikeyFormValues>({
 		resolver: zodResolver(apikeyFormSchema),
 	});
@@ -33,6 +38,10 @@ const Settings = () => {
 
 	const generateApiKeyAPIMutation = useMutation({
 		mutationFn: generateApiKeyAPI,
+		onSuccess: ({ apiKey, apikeyId }) => {
+			setValue("apikey", apiKey);
+			setValue("apikeyId", apikeyId);
+		},
 		onError: (error) => {
 			setError("apikey", { message: error.message });
 		},
@@ -42,8 +51,37 @@ const Settings = () => {
 		generateApiKeyAPIMutation.mutate(domain);
 	};
 
+	const revokeApiKeyAPIMutation = useMutation({
+		mutationFn: revokeApiKeyAPI,
+		onSuccess: ({ message }) => {
+			reset();
+			setRevokeMsg((prev) => {
+				return {
+					...prev,
+					success: message,
+				};
+			});
+
+			setTimeout(() => {
+				setRevokeMsg({});
+			}, 5000);
+		},
+		onError: (error) => {
+			console.log(error);
+			setRevokeMsg((prev) => {
+				return {
+					...prev,
+					error: error.message,
+				};
+			});
+			setTimeout(() => {
+				setRevokeMsg({});
+			}, 5000);
+		},
+	});
+
 	const handleRevokeApiKey = () => {
-		console.log("revoking api key");
+		revokeApiKeyAPIMutation.mutate();
 	};
 	return (
 		<DashboardLayout>
@@ -80,6 +118,12 @@ const Settings = () => {
 							{...register("apikeyId")}
 							readonly='readonly'
 						/>
+						{revokeMsg.success && (
+							<small className={styles.success}>{revokeMsg.success}</small>
+						)}
+						{revokeMsg.error && (
+							<small className={styles.error}>{revokeMsg.error}</small>
+						)}
 						<div className={styles.settings__main_apiBtns}>
 							<Button type='submit'>Generate</Button>
 							<Button type='button' onClick={handleRevokeApiKey}>

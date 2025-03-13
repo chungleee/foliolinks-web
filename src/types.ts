@@ -25,8 +25,8 @@ export interface UserProfile {
 export type UserMembership = "BASIC" | "PRO";
 
 export interface Apikey {
-	key: string;
-	id: string;
+	apiKey: string;
+	apikeyId: string;
 	domain: string;
 	isRevoked: boolean;
 }
