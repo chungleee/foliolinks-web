@@ -16,6 +16,7 @@ interface TextFieldProps {
 	defaultValue?: string;
 	editing?: boolean;
 	disabled?: boolean;
+	readonly?: "readonly";
 }
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -33,6 +34,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 			defaultValue,
 			editing,
 			disabled,
+			readonly,
 			...props
 		},
 		ref
@@ -59,6 +61,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 							placeholder={placeholder}
 							defaultValue={defaultValue}
 							disabled={editing || disabled}
+							readOnly={!!readonly}
 						/>
 						{error?.message && (
 							<small className={styles.error_message}>{error.message}</small>

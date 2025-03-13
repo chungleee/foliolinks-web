@@ -9,7 +9,7 @@ interface UserContextType {
 	userProfile: UserProfile | undefined;
 	isUserPending: boolean;
 	isProfileComplete: boolean;
-	userApiKey?: Pick<Apikey, "apiKey">;
+	userApiKey?: Apikey;
 }
 
 export const UserContext = createContext<UserContextType>({
