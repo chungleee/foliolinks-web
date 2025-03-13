@@ -65,6 +65,7 @@ export const apikeyFormSchema = z.object({
 		.trim()
 		.toLowerCase(),
 	apikey: z.string().optional().readonly(),
+	apikeyId: z.string().optional().readonly(),
 });
 
 export type TApikeyFormValues = z.infer<typeof apikeyFormSchema>;
