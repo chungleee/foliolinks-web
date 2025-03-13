@@ -16,7 +16,7 @@ interface TextFieldProps {
 	defaultValue?: string;
 	editing?: boolean;
 	disabled?: boolean;
-	readonly?: "readonly";
+	readonly?: boolean;
 }
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(

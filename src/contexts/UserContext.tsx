@@ -1,6 +1,5 @@
 import { createContext, ReactNode } from "react";
 import { Apikey, UserProfile } from "../types";
-// import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getUserProfileAPI } from "../api/user";
 import { getApiKeyAPI } from "../api/apikey";
@@ -31,6 +30,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 		queryKey: ["userApiKey"],
 		queryFn: getApiKeyAPI,
 		enabled: membership === "PRO",
+		retry: false,
 	});
 
 	return (

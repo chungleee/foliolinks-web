@@ -2,7 +2,7 @@ import { Apikey } from "../types";
 
 export const generateApiKeyAPI = async (
 	domain: string
-): Promise<Pick<Apikey, "apiKey" | "apikeyId">> => {
+): Promise<Pick<Apikey, "apiKey" | "apikeyId" | "domain">> => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;

@@ -6,7 +6,7 @@ import { generateApiKeyAPI, revokeApiKeyAPI } from "../../../api/apikey";
 import { useForm } from "react-hook-form";
 import { apikeyFormSchema, TApikeyFormValues } from "../../../zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 
@@ -15,7 +15,10 @@ const Settings = () => {
 		success?: string;
 		error?: string;
 	}>({ success: "", error: "" });
+
 	const { userApiKey } = useContext(UserContext);
+	const queryClient = useQueryClient();
+
 	const { apiKey, apikeyId, domain, isRevoked } = userApiKey || {};
 	const {
 		handleSubmit,
@@ -38,9 +41,8 @@ const Settings = () => {
 
 	const generateApiKeyAPIMutation = useMutation({
 		mutationFn: generateApiKeyAPI,
-		onSuccess: ({ apiKey, apikeyId }) => {
-			setValue("apikey", apiKey);
-			setValue("apikeyId", apikeyId);
+		onSuccess: ({ apiKey, apikeyId, domain }) => {
+			queryClient.setQueryData(["userApiKey"], { apiKey, apikeyId, domain });
 		},
 		onError: (error) => {
 			setError("apikey", { message: error.message });
@@ -54,6 +56,7 @@ const Settings = () => {
 	const revokeApiKeyAPIMutation = useMutation({
 		mutationFn: revokeApiKeyAPI,
 		onSuccess: ({ message }) => {
+			queryClient.removeQueries({ queryKey: ["userApiKey"] });
 			reset();
 			setRevokeMsg((prev) => {
 				return {
@@ -104,19 +107,19 @@ const Settings = () => {
 							placeholder='Enter your domain'
 							{...register("domain")}
 							error={errors.domain}
-							readonly={domain ? "readonly" : undefined}
+							readonly={domain ? true : false}
 						/>
 						<TextField
 							label='API key ID'
 							error={errors.apikeyId}
 							{...register("apikey")}
-							readonly='readonly'
+							readonly={true}
 						/>
 						<TextField
 							label='API key'
 							error={errors.apikey}
 							{...register("apikeyId")}
-							readonly='readonly'
+							readonly={true}
 						/>
 						{revokeMsg.success && (
 							<small className={styles.success}>{revokeMsg.success}</small>
