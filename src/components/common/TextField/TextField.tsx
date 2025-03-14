@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import styles from "./TextField.module.scss";
 import { FieldError } from "react-hook-form";
 import Icon from "../Icon";
@@ -8,7 +8,7 @@ interface TextFieldProps {
 	error?: FieldError;
 	placeholder?: string;
 	iconVariant?: "link" | "mail" | "lock" | "zap";
-	type?: "text" | string;
+	type?: "text" | "password" | string;
 	className?: string;
 	inputClassName?: string;
 	labelClassName?: string;
@@ -39,6 +39,10 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 		},
 		ref
 	) => {
+		const [reveal, setReveal] = useState(false);
+		const handleToggleEye = () => {
+			setReveal(!reveal);
+		};
 		return (
 			<div className={className}>
 				<label className={`${styles.label} ${labelClassName}`}>
@@ -57,16 +61,31 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 							className={inputClassName}
 							ref={ref}
 							{...props}
-							type={type}
+							type={
+								type === "password" && reveal
+									? "text"
+									: type === "password" && !reveal
+									? "password"
+									: type
+							}
 							placeholder={placeholder}
 							defaultValue={defaultValue}
 							disabled={editing || disabled}
 							readOnly={!!readonly}
 						/>
-						{error?.message && (
-							<small className={styles.error_message}>{error.message}</small>
-						)}
+						{type === "password" && !reveal ? (
+							<span onClick={handleToggleEye}>
+								<Icon variant='eye' />
+							</span>
+						) : type === "password" && reveal ? (
+							<span onClick={handleToggleEye}>
+								<Icon variant='eyeOff' />
+							</span>
+						) : null}
 					</div>
+					{error?.message && (
+						<small className={styles.error_message}>{error.message}</small>
+					)}
 				</label>
 			</div>
 		);

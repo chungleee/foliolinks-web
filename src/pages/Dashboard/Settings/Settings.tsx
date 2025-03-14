@@ -102,6 +102,7 @@ const Settings = () => {
 						className={styles.settings__main}
 						onSubmit={handleSubmit(handleGenerateApiKey)}
 					>
+						<h3>API key</h3>
 						<TextField
 							label='Domain'
 							placeholder='Enter your domain'
@@ -114,11 +115,13 @@ const Settings = () => {
 							error={errors.apikeyId}
 							{...register("apikey")}
 							readonly={true}
+							type={apiKey ? "password" : "text"}
 						/>
 						<TextField
 							label='API key'
 							error={errors.apikey}
 							{...register("apikeyId")}
+							type={apikeyId ? "password" : "text"}
 							readonly={true}
 						/>
 						{revokeMsg.success && (
@@ -129,11 +132,19 @@ const Settings = () => {
 						)}
 						<div className={styles.settings__main_apiBtns}>
 							<Button type='submit'>Generate</Button>
-							<Button type='button' onClick={handleRevokeApiKey}>
+							<Button
+								type='button'
+								variant='secondary'
+								onClick={handleRevokeApiKey}
+							>
 								Revoke
 							</Button>
 						</div>
 					</form>
+				</section>
+				<section>
+					<h3>Account Deletion</h3>
+					<Button type='button'>Delete Account</Button>
 				</section>
 			</div>
 		</DashboardLayout>
