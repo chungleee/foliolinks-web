@@ -56,7 +56,7 @@ const Settings = () => {
 	const revokeApiKeyAPIMutation = useMutation({
 		mutationFn: revokeApiKeyAPI,
 		onSuccess: ({ message }) => {
-			queryClient.removeQueries({ queryKey: ["userApiKey"] });
+			queryClient.setQueriesData({ queryKey: ["userApiKey"] }, {});
 			reset();
 			setRevokeMsg((prev) => {
 				return {
