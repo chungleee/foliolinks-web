@@ -16,7 +16,7 @@ const Settings = () => {
 		error?: string;
 	}>({ success: "", error: "" });
 
-	const { userApiKey } = useContext(UserContext);
+	const { userApiKey, userProfile } = useContext(UserContext);
 	const queryClient = useQueryClient();
 
 	const { apiKey, apikeyId, domain, isRevoked } = userApiKey || {};
@@ -86,6 +86,8 @@ const Settings = () => {
 	const handleRevokeApiKey = () => {
 		revokeApiKeyAPIMutation.mutate();
 	};
+
+	const isMemberPro = userProfile?.membership === "PRO";
 	return (
 		<DashboardLayout>
 			<div className={styles.settings}>
@@ -131,11 +133,19 @@ const Settings = () => {
 							<small className={styles.error}>{revokeMsg.error}</small>
 						)}
 						<div className={styles.settings__main_apiBtns}>
-							<Button type='submit'>Generate</Button>
 							<Button
+								disabled={!isMemberPro}
+								type='submit'
+								title={!isMemberPro ? "You need a PRO membership" : undefined}
+							>
+								Generate
+							</Button>
+							<Button
+								disabled={!isMemberPro}
 								type='button'
 								variant='secondary'
 								onClick={handleRevokeApiKey}
+								title={!isMemberPro ? "You need a PRO membership" : undefined}
 							>
 								Revoke
 							</Button>

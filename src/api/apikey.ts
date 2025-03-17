@@ -23,7 +23,7 @@ export const generateApiKeyAPI = async (
 		try {
 			const errorJson = await results.json();
 			if (error && errorJson) {
-				error = errorJson.message;
+				error = errorJson.error;
 			}
 		} catch (error) {
 			console.log(error);

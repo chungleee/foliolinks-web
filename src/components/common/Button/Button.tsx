@@ -9,6 +9,7 @@ interface ButtonProps {
 	type?: "submit" | "button" | "reset" | undefined;
 	onClick?: () => void;
 	url?: string;
+	title?: string;
 }
 
 export const Button = ({
@@ -16,6 +17,7 @@ export const Button = ({
 	variant = "default",
 	disabled,
 	type,
+	title,
 	...props
 }: ButtonProps) => {
 	return (
@@ -28,6 +30,7 @@ export const Button = ({
 					? styles.button_secondary
 					: styles.button_primary
 			}
+			title={title}
 		>
 			{children}
 		</button>
