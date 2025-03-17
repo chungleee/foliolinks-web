@@ -61,64 +61,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		if (!access_token) {
 			if (authRoutes.includes(location.pathname)) {
-				navigate(location.pathname);
-				return;
+				return navigate(location.pathname);
+			}
+			setIsAuthenticated(false);
+			return navigate("/login");
+		}
+
+		try {
+			const { exp } = jwtDecode(access_token) as { exp: number };
+			const expiryDate = new Date(exp * 1000);
+			const currentDate = new Date();
+			const isExpired = currentDate > expiryDate;
+
+			if (!isExpired) {
+				setIsAuthenticated(true);
 			}
 
-			setIsAuthenticated(false);
+			if (isExpired) {
+				refreshAccessToken();
+			}
+
+			if (isAuthenticated && authRoutes.includes(location.pathname)) {
+				return navigate("/dashboard");
+			}
+
+			const tenMinutesInMs = 10 * 60 * 1000;
+			const tenMinBeforeExpiry = expiryDate.getTime() - tenMinutesInMs;
+			const delay = Math.max(0, tenMinBeforeExpiry - Date.now());
+
+			const silentRefreshTimeout = setTimeout(async () => {
+				await refreshAccessToken();
+			}, delay);
+
+			return () => {
+				clearTimeout(silentRefreshTimeout);
+			};
+		} catch (error) {
+			console.error(error);
 			navigate("/login");
-			return;
-		}
-
-		const { exp } = jwtDecode(access_token) as { exp: number };
-		const expiryDate = new Date(exp * 1000);
-		const currentDate = new Date();
-		const isExpired = currentDate > expiryDate;
-
-		if (!isExpired) {
-			setIsAuthenticated(true);
-			return;
-		}
-
-		if (isExpired) {
-			refreshAccessToken();
 		}
 	}, [
 		access_token,
-		navigate,
-		setIsAuthenticated,
-		refreshAccessToken,
 		location.pathname,
-	]);
-
-	/**
-	 * Hide Login and Register pages if user is already authenticated by always navigating to Dashboard page if conditions are met
-	 */
-	useEffect(() => {
-		if (isAuthenticated && authRoutes.includes(location.pathname)) {
-			navigate("/dashboard");
-		}
-
-		if (!access_token) return;
-
-		const { exp } = jwtDecode(access_token) as { exp: number };
-		const expiryDate = new Date(exp * 1000);
-		const tenMinutesInMs = 10 * 60 * 1000;
-		const tenMinBeforeExpiry = expiryDate.getTime() - tenMinutesInMs;
-		const delay = Math.max(0, tenMinBeforeExpiry - Date.now());
-
-		const silentRefreshTimeout = setTimeout(async () => {
-			await refreshAccessToken();
-		}, delay);
-		return () => {
-			clearTimeout(silentRefreshTimeout);
-		};
-	}, [
+		navigate,
+		refreshAccessToken,
 		isAuthenticated,
-		location.pathname,
-		access_token,
-		navigate,
-		refreshAccessToken,
 	]);
 
 	return (

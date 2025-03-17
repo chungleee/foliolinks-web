@@ -7,9 +7,11 @@ import {
 	FiArrowRight,
 	FiUser,
 	FiEye,
+	FiEyeOff,
 	FiZap,
 	FiImage,
 	FiLogOut,
+	FiSettings,
 } from "react-icons/fi";
 
 type Variants =
@@ -21,9 +23,11 @@ type Variants =
 	| "right-arrow"
 	| "user"
 	| "eye"
+	| "eyeOff"
 	| "zap"
 	| "image"
-	| "logout";
+	| "logout"
+	| "settings";
 
 interface IconProps {
 	variant?: Variants;
@@ -56,18 +60,21 @@ const Icon = ({ variant, ...props }: IconProps) => {
 		case "eye": {
 			return <FiEye {...props} />;
 		}
+		case "eyeOff": {
+			return <FiEyeOff {...props} />;
+		}
 		case "zap": {
 			return <FiZap {...props} />;
 		}
-
 		case "image": {
 			return <FiImage {...props} />;
 		}
-
 		case "logout": {
 			return <FiLogOut {...props} />;
 		}
-
+		case "settings": {
+			return <FiSettings {...props} />;
+		}
 		default: {
 			return null;
 		}

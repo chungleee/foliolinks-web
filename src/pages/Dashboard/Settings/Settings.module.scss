@@ -1,0 +1,33 @@
+@use "../../../variables";
+
+.settings {
+	padding: 1.5rem;
+
+	&__intro {
+		p {
+			color: variables.$grey;
+		}
+	}
+
+	&__main {
+		background-color: variables.$light-grey;
+		display: flex;
+		flex-direction: column;
+		padding: 1.25rem;
+		border-radius: 8px;
+		row-gap: 1rem;
+
+		&_apiBtns {
+			display: flex;
+			column-gap: 0.5rem;
+		}
+	}
+
+	.success {
+		color: green;
+	}
+
+	.error {
+		color: variables.$red;
+	}
+}

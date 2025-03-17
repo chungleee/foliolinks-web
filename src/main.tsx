@@ -17,6 +17,7 @@ import CreateUserAccount from "./pages/Auth/Register/CreateUserAccount/CreateUse
 import CreateUserInfo from "./pages/Auth/Register/CreateUserProfile/CreateUserProfile.tsx";
 import Preview from "./pages/Dashboard/Preview/Preview.tsx";
 import AuthLayout from "./layout/AuthLayout.tsx";
+import Settings from "./pages/Dashboard/Settings/Settings.tsx";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,16 @@ const router = createBrowserRouter([
 							<ProjectsProvider>
 								<Preview />
 							</ProjectsProvider>
+						</UserProvider>
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: "/dashboard/settings",
+				element: (
+					<ProtectedRoute>
+						<UserProvider>
+							<Settings />
 						</UserProvider>
 					</ProtectedRoute>
 				),

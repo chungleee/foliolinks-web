@@ -11,6 +11,11 @@ const dashboardLinks = [
 		name: "Profile",
 		icon: <Icon variant='user' />,
 	},
+	{
+		href: "/dashboard/settings",
+		name: "Settings",
+		icon: <Icon variant='settings' />,
+	},
 ];
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
