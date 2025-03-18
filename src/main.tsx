@@ -18,6 +18,7 @@ import CreateUserInfo from "./pages/Auth/Register/CreateUserProfile/CreateUserPr
 import Preview from "./pages/Dashboard/Preview/Preview.tsx";
 import AuthLayout from "./layout/AuthLayout.tsx";
 import Settings from "./pages/Dashboard/Settings/Settings.tsx";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary.tsx";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <AuthLayout />,
+		errorElement: <ErrorBoundary />,
 		children: [
 			{ path: "*", element: <NotFound /> },
 			{ index: true, element: <App /> },
