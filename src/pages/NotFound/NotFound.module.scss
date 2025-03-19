@@ -1,0 +1,11 @@
+@use "../../variables";
+
+.error_notfound {
+	align-items: center;
+	background-color: variables.$light-grey;
+	display: flex;
+	flex-direction: column;
+	min-height: 100dvh;
+	row-gap: 1.5rem;
+	padding: 1.5rem;
+}

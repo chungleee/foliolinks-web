@@ -8,7 +8,7 @@ import AddLinks from "./pages/Dashboard/AddLinks/AddLinks.tsx";
 import Login from "./pages/Auth/Login/Login.tsx";
 import Register from "./pages/Auth/Register/Register.tsx";
 import Profile from "./pages/Dashboard/Profile/Profile.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import NotFound from "./pages/NotFound/NotFound.tsx";
 import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -18,6 +18,7 @@ import CreateUserInfo from "./pages/Auth/Register/CreateUserProfile/CreateUserPr
 import Preview from "./pages/Dashboard/Preview/Preview.tsx";
 import AuthLayout from "./layout/AuthLayout.tsx";
 import Settings from "./pages/Dashboard/Settings/Settings.tsx";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary.tsx";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <AuthLayout />,
+		errorElement: <ErrorBoundary />,
 		children: [
 			{ path: "*", element: <NotFound /> },
 			{ index: true, element: <App /> },
