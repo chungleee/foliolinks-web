@@ -1,15 +1,20 @@
-import { useRouteError } from "react-router-dom";
+import styles from "./ErrorBoundary.module.scss";
+import { useNavigate, useRouteError } from "react-router-dom";
+import { Button } from "../common/Button/Button";
 
 function ErrorBoundary() {
-	let error = useRouteError();
+	const error = useRouteError();
+	const navigate = useNavigate();
 	console.error(error);
 
 	return (
-		<div>
-			<h1>Dang! Something went wrong</h1>
-			<p>
-				<a href='/dashboard'>Go to Homepage</a>
-			</p>
+		<div className={styles.error_boundary}>
+			<div>
+				<h1>Dang! Something went wrong!</h1>
+				<p>
+					<Button onClick={() => navigate("/")}>Go to Homepage</Button>
+				</p>
+			</div>
 			{process.env.NODE_ENV === "development" && (
 				<div>
 					<h2>Error Details (Development Only)</h2>

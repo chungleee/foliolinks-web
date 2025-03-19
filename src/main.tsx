@@ -8,7 +8,7 @@ import AddLinks from "./pages/Dashboard/AddLinks/AddLinks.tsx";
 import Login from "./pages/Auth/Login/Login.tsx";
 import Register from "./pages/Auth/Register/Register.tsx";
 import Profile from "./pages/Dashboard/Profile/Profile.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import NotFound from "./pages/NotFound/NotFound.tsx";
 import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
