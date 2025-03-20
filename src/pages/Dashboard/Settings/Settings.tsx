@@ -9,6 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../../../contexts/UserContext";
+import { handleDeleteAccountAPI } from "../../../api/auth";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
 	const [revokeMsg, setRevokeMsg] = useState<{
@@ -17,6 +19,7 @@ const Settings = () => {
 	}>({ success: "", error: "" });
 
 	const { userApiKey, userProfile } = useContext(UserContext);
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -92,8 +95,20 @@ const Settings = () => {
 		dialogRef.current?.showModal();
 	};
 
+	const deleteAccountMutation = useMutation({
+		mutationFn: handleDeleteAccountAPI,
+		onSuccess: () => {
+			queryClient.clear();
+			localStorage.removeItem("foliolinks_access_token");
+			navigate("/");
+		},
+		onError: (error) => {
+			throw new Error(error.message);
+		},
+	});
+
 	const handleDeleteAccount = () => {
-		console.log("deleting...");
+		deleteAccountMutation.mutate();
 	};
 
 	const isMemberPro = userProfile?.membership === "PRO";
