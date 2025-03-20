@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { apikeyFormSchema, TApikeyFormValues } from "../../../zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
+import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 
 const Settings = () => {
@@ -18,6 +18,7 @@ const Settings = () => {
 
 	const { userApiKey, userProfile } = useContext(UserContext);
 	const queryClient = useQueryClient();
+	const dialogRef = useRef<HTMLDialogElement>(null);
 
 	const { apiKey, apikeyId, domain, isRevoked } = userApiKey || {};
 	const {
@@ -87,10 +88,23 @@ const Settings = () => {
 		revokeApiKeyAPIMutation.mutate();
 	};
 
+	const handleShowWarningModal = () => {
+		dialogRef.current?.showModal();
+	};
+
+	const handleDeleteAccount = () => {
+		console.log("deleting...");
+	};
+
 	const isMemberPro = userProfile?.membership === "PRO";
+
 	return (
 		<DashboardLayout>
 			<div className={styles.settings}>
+				<DeleteWarningModal
+					dialogRef={dialogRef}
+					handleDeleteAccount={handleDeleteAccount}
+				/>
 				<section className={styles.settings__intro}>
 					<p>
 						Here you can manage your membership tier, generate your API key and
@@ -154,7 +168,9 @@ const Settings = () => {
 				</section>
 				<section>
 					<h3>Account Deletion</h3>
-					<Button type='button'>Delete Account</Button>
+					<Button type='button' onClick={() => handleShowWarningModal()}>
+						Delete Account
+					</Button>
 				</section>
 			</div>
 		</DashboardLayout>
@@ -162,3 +178,42 @@ const Settings = () => {
 };
 
 export default Settings;
+
+interface DeleteWarningModalProps {
+	dialogRef: RefObject<HTMLDialogElement>;
+	handleDeleteAccount: () => void;
+}
+
+const DeleteWarningModal = ({
+	dialogRef,
+	handleDeleteAccount,
+}: DeleteWarningModalProps) => {
+	const [confirmValue, setConfirmValue] = useState("");
+
+	const handleCloseWarningModal = () => {
+		dialogRef.current?.close();
+	};
+
+	const deleteConfirmed = !(confirmValue === "confirm");
+
+	return (
+		<dialog ref={dialogRef}>
+			<h3>Are you sure?</h3>
+			<h4>Please type 'confirm' to delete your account.</h4>
+			<TextField
+				label='confirm'
+				value={confirmValue}
+				onChange={(e) => setConfirmValue(e.target.value)}
+			/>
+			<div>
+				<Button
+					disabled={deleteConfirmed}
+					onClick={() => handleDeleteAccount()}
+				>
+					Confirm
+				</Button>
+				<Button onClick={() => handleCloseWarningModal()}>Cancel</Button>
+			</div>
+		</dialog>
+	);
+};
