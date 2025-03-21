@@ -1,3 +1,4 @@
+import { CSSProperties } from "react";
 import {
 	FiLink,
 	FiMail,
@@ -12,6 +13,7 @@ import {
 	FiImage,
 	FiLogOut,
 	FiSettings,
+	FiXCircle,
 } from "react-icons/fi";
 
 type Variants =
@@ -27,11 +29,13 @@ type Variants =
 	| "zap"
 	| "image"
 	| "logout"
-	| "settings";
+	| "settings"
+	| "close";
 
 interface IconProps {
 	variant?: Variants;
 	className?: string;
+	style?: CSSProperties;
 }
 
 const Icon = ({ variant, ...props }: IconProps) => {
@@ -74,6 +78,9 @@ const Icon = ({ variant, ...props }: IconProps) => {
 		}
 		case "settings": {
 			return <FiSettings {...props} />;
+		}
+		case "close": {
+			return <FiXCircle {...props} />;
 		}
 		default: {
 			return null;

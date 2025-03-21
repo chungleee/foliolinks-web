@@ -11,6 +11,7 @@ import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 import { handleDeleteAccountAPI } from "../../../api/auth";
 import { useNavigate } from "react-router-dom";
+import Icon from "../../../components/common/Icon";
 
 const Settings = () => {
 	const [revokeMsg, setRevokeMsg] = useState<{
@@ -213,21 +214,31 @@ const DeleteWarningModal = ({
 
 	return (
 		<dialog ref={dialogRef}>
-			<h3>Are you sure?</h3>
-			<h4>Please type 'confirm' to delete your account.</h4>
-			<TextField
-				label='confirm'
-				value={confirmValue}
-				onChange={(e) => setConfirmValue(e.target.value)}
-			/>
-			<div>
-				<Button
-					disabled={deleteConfirmed}
-					onClick={() => handleDeleteAccount()}
-				>
-					Confirm
-				</Button>
-				<Button onClick={() => handleCloseWarningModal()}>Cancel</Button>
+			<span
+				onClick={() => handleCloseWarningModal()}
+				className={styles.dialog__exitIcon}
+				role='button'
+			>
+				<Icon style={{ height: "25px", width: "25px" }} variant='close' />
+			</span>
+			<div className={styles.dialog__content}>
+				<div>
+					<h3>Are you sure?</h3>
+					<h4>Please type 'confirm' to delete your account.</h4>
+					<TextField
+						value={confirmValue}
+						onChange={(e) => setConfirmValue(e.target.value)}
+					/>
+				</div>
+				<div className={styles.dialog__actionBtns}>
+					<Button
+						disabled={deleteConfirmed}
+						onClick={() => handleDeleteAccount()}
+					>
+						Confirm
+					</Button>
+					<Button onClick={() => handleCloseWarningModal()}>Cancel</Button>
+				</div>
 			</div>
 		</dialog>
 	);
