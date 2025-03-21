@@ -7,8 +7,11 @@ import { useForm } from "react-hook-form";
 import { apikeyFormSchema, TApikeyFormValues } from "../../../zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
+import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../../../contexts/UserContext";
+import { handleDeleteAccountAPI } from "../../../api/auth";
+import { useNavigate } from "react-router-dom";
+import Icon from "../../../components/common/Icon";
 
 const Settings = () => {
 	const [revokeMsg, setRevokeMsg] = useState<{
@@ -17,7 +20,9 @@ const Settings = () => {
 	}>({ success: "", error: "" });
 
 	const { userApiKey, userProfile } = useContext(UserContext);
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const dialogRef = useRef<HTMLDialogElement>(null);
 
 	const { apiKey, apikeyId, domain, isRevoked } = userApiKey || {};
 	const {
@@ -87,10 +92,35 @@ const Settings = () => {
 		revokeApiKeyAPIMutation.mutate();
 	};
 
+	const handleShowWarningModal = () => {
+		dialogRef.current?.showModal();
+	};
+
+	const deleteAccountMutation = useMutation({
+		mutationFn: handleDeleteAccountAPI,
+		onSuccess: () => {
+			queryClient.clear();
+			localStorage.removeItem("foliolinks_access_token");
+			navigate("/");
+		},
+		onError: (error) => {
+			throw new Error(error.message);
+		},
+	});
+
+	const handleDeleteAccount = () => {
+		deleteAccountMutation.mutate();
+	};
+
 	const isMemberPro = userProfile?.membership === "PRO";
+
 	return (
 		<DashboardLayout>
 			<div className={styles.settings}>
+				<DeleteWarningModal
+					dialogRef={dialogRef}
+					handleDeleteAccount={handleDeleteAccount}
+				/>
 				<section className={styles.settings__intro}>
 					<p>
 						Here you can manage your membership tier, generate your API key and
@@ -154,7 +184,9 @@ const Settings = () => {
 				</section>
 				<section>
 					<h3>Account Deletion</h3>
-					<Button type='button'>Delete Account</Button>
+					<Button type='button' onClick={() => handleShowWarningModal()}>
+						Delete Account
+					</Button>
 				</section>
 			</div>
 		</DashboardLayout>
@@ -162,3 +194,52 @@ const Settings = () => {
 };
 
 export default Settings;
+
+interface DeleteWarningModalProps {
+	dialogRef: RefObject<HTMLDialogElement>;
+	handleDeleteAccount: () => void;
+}
+
+const DeleteWarningModal = ({
+	dialogRef,
+	handleDeleteAccount,
+}: DeleteWarningModalProps) => {
+	const [confirmValue, setConfirmValue] = useState("");
+
+	const handleCloseWarningModal = () => {
+		dialogRef.current?.close();
+	};
+
+	const deleteConfirmed = !(confirmValue === "confirm");
+
+	return (
+		<dialog ref={dialogRef}>
+			<span
+				onClick={() => handleCloseWarningModal()}
+				className={styles.dialog__exitIcon}
+				role='button'
+			>
+				<Icon style={{ height: "25px", width: "25px" }} variant='close' />
+			</span>
+			<div className={styles.dialog__content}>
+				<div>
+					<h3>Are you sure?</h3>
+					<h4>Please type 'confirm' to delete your account.</h4>
+					<TextField
+						value={confirmValue}
+						onChange={(e) => setConfirmValue(e.target.value)}
+					/>
+				</div>
+				<div className={styles.dialog__actionBtns}>
+					<Button
+						disabled={deleteConfirmed}
+						onClick={() => handleDeleteAccount()}
+					>
+						Confirm
+					</Button>
+					<Button onClick={() => handleCloseWarningModal()}>Cancel</Button>
+				</div>
+			</div>
+		</dialog>
+	);
+};

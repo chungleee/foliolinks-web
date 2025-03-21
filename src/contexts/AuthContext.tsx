@@ -46,7 +46,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			}
 		} catch (error) {
 			console.log("refresh error: ", error);
-			navigate("/login");
+			if (authRoutes.includes(location.pathname)) {
+				navigate(location.pathname);
+			} else {
+				navigate("/login");
+			}
 		}
 	}, [location.pathname, navigate]);
 
@@ -98,7 +102,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			};
 		} catch (error) {
 			console.error(error);
-			navigate("/login");
+			if (authRoutes.includes(location.pathname)) {
+				navigate(location.pathname);
+			} else {
+				navigate("/login");
+			}
 		}
 	}, [
 		access_token,

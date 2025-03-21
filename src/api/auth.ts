@@ -70,3 +70,32 @@ export const handleLogoutAPI = async () => {
 
 	return json;
 };
+
+export const handleDeleteAccountAPI = async () => {
+	const token = localStorage.getItem("foliolinks_access_token");
+
+	const results = await fetch(`${url}/api/users/auth/delete-account`, {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		credentials: "include",
+	});
+
+	if (!results.ok) {
+		let error = `Request failed with status ${results.status}`;
+		try {
+			const errorJson = await results.json();
+			if (error && errorJson) {
+				error = errorJson.message;
+			}
+		} catch (error) {
+			console.log(error);
+		}
+		throw new Error(error);
+	}
+
+	const json = await results.json();
+
+	return json;
+};

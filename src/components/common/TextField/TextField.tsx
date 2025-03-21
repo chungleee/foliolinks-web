@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { ChangeEvent, forwardRef, useState } from "react";
 import styles from "./TextField.module.scss";
 import { FieldError } from "react-hook-form";
 import Icon from "../Icon";
@@ -17,6 +17,8 @@ interface TextFieldProps {
 	editing?: boolean;
 	disabled?: boolean;
 	readonly?: boolean;
+	value?: string;
+	onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -35,6 +37,8 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 			editing,
 			disabled,
 			readonly,
+			value,
+			onChange,
 			...props
 		},
 		ref
@@ -72,6 +76,8 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 							defaultValue={defaultValue}
 							disabled={editing || disabled}
 							readOnly={!!readonly}
+							value={value}
+							onChange={onChange}
 						/>
 						{type === "password" && !reveal ? (
 							<span onClick={handleToggleEye}>
