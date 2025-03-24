@@ -41,23 +41,24 @@ export const profileSchema = z.object({
 			if (!files?.length) return true;
 			return files[0]?.size <= MAX_FILE_SIZE;
 		}, "File needs to be 5MB or less"),
-	username: z.string().min(1, { message: "Field is required" }).trim(),
-	firstName: z.string().min(1, { message: "Field is required" }).trim(),
-	lastName: z.string().min(1, { message: "Field is required" }).trim(),
-	email: z
-		.string()
-		.transform((value) => {
-			if (!value) return;
-			return value;
-		})
-		.pipe(
-			z
-				.string()
-				.email({ message: "Invalie email address" })
-				.trim()
-				.toLowerCase()
-				.optional()
-		),
+	username: z.string().trim().min(1, { message: "Field is required" }),
+	firstName: z.string().trim().min(1, { message: "Field is required" }),
+	lastName: z.string().trim().min(1, { message: "Field is required" }),
+	// email: z
+	// 	.string()
+	// 	.optional()
+	// 	.transform((value) => {
+	// 		if (!value) return;
+	// 		return value;
+	// 	})
+	// 	.pipe(
+	// 		z
+	// 			.string()
+	// 			.email({ message: "Invalie email address" })
+	// 			.trim()
+	// 			.toLowerCase()
+	// 			.optional()
+	// 	),
 });
 
 export type TProfileFormValues = z.infer<typeof profileSchema>;

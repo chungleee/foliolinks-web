@@ -30,7 +30,7 @@ export const createUserProfileAPI = async (
 	data: Pick<UserProfile, "username" | "firstName" | "lastName">
 ): Promise<UserProfile | undefined> => {
 	const token = localStorage.getItem("foliolinks_access_token");
-	if (!token) return;
+	// if (!token) return;
 
 	try {
 		const url = import.meta.env.DEV
@@ -45,8 +45,23 @@ export const createUserProfileAPI = async (
 				"Content-Type": "application/json",
 			},
 		});
+
+		if (!result.ok) {
+			let error = `Request failed with status ${result.status}`;
+			try {
+				const errorJson = await result.json();
+				if (error && errorJson) {
+					error = errorJson.error;
+				}
+			} catch (error) {
+				console.log(error);
+			}
+			throw new Error(error);
+		}
+
 		const json = await result.json();
 		if (json.error) throw new Error(json.error);
+
 		return json.data;
 	} catch (error) {
 		if (error instanceof Error) throw new Error(error.message);
