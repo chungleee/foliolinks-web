@@ -1,15 +1,25 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import styles from "./Profile.module.scss";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TUserInfoInputs } from "../../Auth/model";
 import { TProfileFormValues, profileSchema } from "../model";
+
+import { UserContext } from "../../../contexts/UserContext";
+import DashboardLayout from "../DashboardLayout";
+
 import TextField from "../../../components/common/TextField/TextField";
 import { Button } from "../../../components/common/Button/Button";
 import Icon from "../../../components/common/Icon";
-import DashboardLayout from "../DashboardLayout";
-import { UserContext } from "../../../contexts/UserContext";
+
+import { createUserProfileAPI } from "../../../api/user";
 
 const Profile = () => {
+	const queryClient = useQueryClient();
+	const [error, setError] = useState("");
 	const { userProfile, isProfileComplete } = useContext(UserContext);
 	const { username, firstName, lastName, email } = userProfile ?? {};
 
@@ -25,28 +35,20 @@ const Profile = () => {
 		mode: "onSubmit",
 	});
 
-	const handleSave = async (data: TProfileFormValues) => {
-		console.log("form data: ", data);
-		try {
-			const url = import.meta.env.DEV
-				? import.meta.env.VITE_DEV_API
-				: import.meta.env.VITE_PROD_URL;
-
-			const token = localStorage.getItem("foliolinks_access_token");
-			const result = await fetch(`${url}/api/users/profile/create`, {
-				method: "POST",
-				body: JSON.stringify(data),
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
+	const createUserProfileMutation = useMutation({
+		mutationFn: createUserProfileAPI,
+		onSuccess: (data) => {
+			queryClient.setQueryData(["userProfile"], {
+				username: data?.username,
+				firstName: data?.firstName,
+				lastName: data?.lastName,
 			});
-			const json = await result.json();
+		},
+		onError: (error) => setError(error.message),
+	});
 
-			console.log("json: ", json);
-		} catch (error) {
-			console.error("save error: ", error);
-		}
+	const handleSubmitUserProfile = (data: TUserInfoInputs) => {
+		createUserProfileMutation.mutate(data);
 	};
 
 	useEffect(() => {
@@ -64,7 +66,10 @@ const Profile = () => {
 					<h2>Profile Details</h2>
 				</section>
 
-				<form className={styles.profile__form_section}>
+				<form
+					className={styles.profile__form_section}
+					onSubmit={handleSubmit(handleSubmitUserProfile)}
+				>
 					<div className={styles.profile__form_section__image_upload}>
 						<p>Profile picture</p>
 						<div>
@@ -109,7 +114,7 @@ const Profile = () => {
 							{...register("username")}
 							error={errors.firstName}
 							placeholder='John'
-							disabled={isProfileComplete}
+							disabled={isProfileComplete || !!username}
 							defaultValue={username}
 						/>
 						<TextField
@@ -120,7 +125,7 @@ const Profile = () => {
 							{...register("firstName")}
 							error={errors.firstName}
 							placeholder='John'
-							disabled={isProfileComplete}
+							disabled={isProfileComplete || !!firstName}
 							defaultValue={firstName}
 						/>
 						<TextField
@@ -131,7 +136,7 @@ const Profile = () => {
 							{...register("lastName")}
 							error={errors.lastName}
 							placeholder='Doe'
-							disabled={isProfileComplete}
+							disabled={isProfileComplete || !!lastName}
 							defaultValue={lastName}
 						/>
 						<TextField
@@ -139,17 +144,17 @@ const Profile = () => {
 							inputContainerClassName={styles.textfields}
 							label='Email'
 							type='email'
-							{...register("email")}
-							error={errors.email}
+							// {...register("email")}
+							// error={errors.email}
 							placeholder='e.g. johndoe@email.com'
-							disabled={isProfileComplete}
+							disabled={isProfileComplete || !!email}
 							defaultValue={email}
 						/>
+						{error ? <small style={{ color: "red" }}>{error}</small> : null}
 					</div>
 
 					<section className={styles.save_button}>
 						<Button
-							onClick={handleSubmit(handleSave)}
 							variant='default'
 							type='submit'
 							disabled={isProfileComplete}
