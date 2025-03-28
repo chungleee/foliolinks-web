@@ -17,9 +17,13 @@
 	}
 
 	button {
-		margin-top: 2rem;
 		margin-bottom: 2rem;
-		width: 100%;
+	}
+
+	.register_page__form {
+		display: flex;
+		flex-direction: column;
+		row-gap: 1.5rem;
 	}
 
 	section:last-of-type {
@@ -41,8 +45,4 @@
 		padding-left: 2rem;
 		padding-right: 2rem;
 	}
-}
-
-.form_textfield {
-	margin: 1.5rem 0;
 }

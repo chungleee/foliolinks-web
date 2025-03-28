@@ -7,7 +7,7 @@ interface TextFieldProps {
 	label?: string;
 	error?: FieldError;
 	placeholder?: string;
-	iconVariant?: "link" | "mail" | "lock" | "zap";
+	iconVariant?: "link" | "mail" | "lock" | "zap" | "user";
 	type?: "text" | "password" | string;
 	className?: string;
 	inputClassName?: string;
