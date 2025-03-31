@@ -40,8 +40,9 @@ export const handleRegisterAPI = async (data: TRegisterFormInputs) => {
 
 	const json = await result.json();
 
-	if (json.error || json.name === "AuthApiError")
-		throw new Error(json.error || json.message);
+	if (json.errorCode) {
+		throw json;
+	}
 
 	const { access_token } = await json;
 

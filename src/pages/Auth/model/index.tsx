@@ -14,6 +14,11 @@ export type TLoginFormInputs = z.infer<typeof loginSchema>;
 
 export const registerSchema = z
 	.object({
+		username: z
+			.string()
+			.min(1, { message: "Can't be empty" })
+			.toLowerCase()
+			.trim(),
 		email: z
 			.string()
 			.min(1, { message: "Can't be empty" })
@@ -36,11 +41,6 @@ export const registerSchema = z
 export type TRegisterFormInputs = z.infer<typeof registerSchema>;
 
 export const userInfoSchema = z.object({
-	username: z
-		.string()
-		.min(1, { message: "Can't be empty" })
-		.toLowerCase()
-		.trim(),
 	firstName: z.string().min(1, { message: "Can't be empty" }).trim(),
 	lastName: z.string().min(1, { message: "Can't be empty" }).trim(),
 });

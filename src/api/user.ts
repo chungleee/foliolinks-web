@@ -27,7 +27,7 @@ export const getUserProfileAPI = async (): Promise<UserProfile | undefined> => {
 };
 
 export const createUserProfileAPI = async (
-	data: Pick<UserProfile, "username" | "firstName" | "lastName">
+	data: Pick<UserProfile, "firstName" | "lastName">
 ): Promise<UserProfile | undefined> => {
 	const token = localStorage.getItem("foliolinks_access_token");
 	// if (!token) return;

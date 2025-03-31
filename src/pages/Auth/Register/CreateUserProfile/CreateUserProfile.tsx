@@ -46,12 +46,6 @@ const CreateUserProfile = () => {
 							className={styles.register_page__form}
 							onSubmit={handleSubmit(handleSubmitUserProfile)}
 						>
-							<TextField
-								{...register("username")}
-								error={errors.username}
-								label='username'
-								placeholder='johndoe'
-							/>
 							{error ? <small style={{ color: "red" }}>{error}</small> : null}
 							<TextField
 								{...register("firstName")}
