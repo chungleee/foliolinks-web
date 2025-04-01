@@ -99,8 +99,12 @@ const Settings = () => {
 	const deleteAccountMutation = useMutation({
 		mutationFn: handleDeleteAccountAPI,
 		onSuccess: () => {
+			const accessTokenKeyName = import.meta.env.DEV
+				? import.meta.env.VITE_DEV_ACCESS_TOKEN
+				: import.meta.env.VITE_PROD_ACCESS_TOKEN;
+
 			queryClient.clear();
-			localStorage.removeItem("foliolinks_access_token");
+			localStorage.removeItem(accessTokenKeyName);
 			navigate("/");
 		},
 		onError: (error) => {

@@ -1,12 +1,16 @@
 import { Project } from "../types";
 import { TCreateLinksValues } from "../zod";
 
+const accessTokenKeyName = import.meta.env.DEV
+	? import.meta.env.VITE_DEV_ACCESS_TOKEN
+	: import.meta.env.VITE_PROD_ACCESS_TOKEN;
+
 export const getProjectsAPI = async (): Promise<Project[]> => {
 	const url = import.meta.env.DEV
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
 
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 
 	const results = await fetch(`${url}/api/users/projects`, {
 		method: "get",
@@ -27,7 +31,7 @@ export const createProjectsAPI = async (
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
 
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 	try {
 		const result = await fetch(`${url}/api/users/projects`, {
 			method: "POST",
@@ -50,7 +54,7 @@ export const deleteProjectAPI = async (project: Project) => {
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
 
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 
 	try {
 		const result = await fetch(`${url}/api/users/projects/${project.id}`, {
@@ -78,7 +82,7 @@ export const updateProjectAPI = async (project: Project) => {
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
 
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 	try {
 		const result = await fetch(`${url}/api/users/projects/`, {
 			method: "PATCH",

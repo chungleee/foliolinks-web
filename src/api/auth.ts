@@ -4,6 +4,10 @@ const url = import.meta.env.DEV
 	? import.meta.env.VITE_DEV_API
 	: import.meta.env.VITE_PROD_URL;
 
+const accessTokenKeyName = import.meta.env.DEV
+	? import.meta.env.VITE_DEV_ACCESS_TOKEN
+	: import.meta.env.VITE_PROD_ACCESS_TOKEN;
+
 export const handleLoginAPI = async (data: TLoginFormInputs) => {
 	try {
 		const url = import.meta.env.DEV
@@ -20,7 +24,7 @@ export const handleLoginAPI = async (data: TLoginFormInputs) => {
 		const json = await result.json();
 		const { access_token } = await json;
 
-		localStorage.setItem("foliolinks_access_token", access_token);
+		localStorage.setItem(accessTokenKeyName, access_token);
 	} catch (error) {
 		console.log(error);
 	}
@@ -48,13 +52,13 @@ export const handleRegisterAPI = async (data: TRegisterFormInputs) => {
 
 	if (!access_token) throw new Error("Token not found");
 
-	localStorage.setItem("foliolinks_access_token", access_token);
+	localStorage.setItem(accessTokenKeyName, access_token);
 
 	return access_token;
 };
 
 export const handleLogoutAPI = async () => {
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 
 	const result = await fetch(`${url}/api/users/auth/logout`, {
 		method: "POST",
@@ -66,14 +70,14 @@ export const handleLogoutAPI = async () => {
 	const json = await result.json();
 
 	if (json.loggedOut) {
-		localStorage.removeItem("foliolinks_access_token");
+		localStorage.removeItem(accessTokenKeyName);
 	}
 
 	return json;
 };
 
 export const handleDeleteAccountAPI = async () => {
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 
 	const results = await fetch(`${url}/api/users/auth/delete-account`, {
 		method: "POST",

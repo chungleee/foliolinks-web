@@ -1,5 +1,9 @@
 import { Apikey } from "../types";
 
+const accessTokenKeyName = import.meta.env.DEV
+	? import.meta.env.VITE_DEV_ACCESS_TOKEN
+	: import.meta.env.VITE_PROD_ACCESS_TOKEN;
+
 export const generateApiKeyAPI = async (
 	domain: string
 ): Promise<Pick<Apikey, "apiKey" | "apikeyId" | "domain">> => {
@@ -7,7 +11,7 @@ export const generateApiKeyAPI = async (
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
 
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 
 	const results = await fetch(`${url}/api/apikey/generate-api-key`, {
 		method: "POST",
@@ -40,7 +44,7 @@ export const getApiKeyAPI = async (): Promise<Apikey> => {
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
 
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 
 	const results = await fetch(`${url}/api/apikey/get-api-key`, {
 		method: "get",
@@ -71,7 +75,7 @@ export const revokeApiKeyAPI = async (): Promise<{ message: string }> => {
 		? import.meta.env.VITE_DEV_API
 		: import.meta.env.VITE_PROD_URL;
 
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 
 	const results = await fetch(`${url}/api/apikey/revoke-api-key`, {
 		method: "post",
