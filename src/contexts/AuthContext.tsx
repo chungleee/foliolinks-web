@@ -17,12 +17,15 @@ export const AuthContext = createContext<AuthContextType>({
 });
 
 const authRoutes = ["/login", "/register"];
+const accessTokenKeyName = import.meta.env.DEV
+	? import.meta.env.VITE_DEV_ACCESS_TOKEN
+	: import.meta.env.VITE_PROD_ACCESS_TOKEN;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const navigate = useNavigate();
 	const location = useLocation();
-	const access_token = localStorage.getItem("foliolinks_access_token");
+	const access_token = localStorage.getItem(accessTokenKeyName);
 
 	const refreshAccessToken = useCallback(async () => {
 		try {
@@ -40,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			if (json?.status === 400) {
 				throw Error(json.name);
 			} else {
-				localStorage.setItem("foliolinks_access_token", json.access_token);
+				localStorage.setItem(accessTokenKeyName, json.access_token);
 				setIsAuthenticated(true);
 				navigate(location.pathname);
 			}

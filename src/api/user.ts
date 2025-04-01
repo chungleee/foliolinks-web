@@ -1,7 +1,11 @@
 import { UserProfile } from "../types";
 
+const accessTokenKeyName = import.meta.env.DEV
+	? import.meta.env.VITE_DEV_ACCESS_TOKEN
+	: import.meta.env.VITE_PROD_ACCESS_TOKEN;
+
 export const getUserProfileAPI = async (): Promise<UserProfile | undefined> => {
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 	if (!token) return;
 
 	try {
@@ -29,7 +33,7 @@ export const getUserProfileAPI = async (): Promise<UserProfile | undefined> => {
 export const createUserProfileAPI = async (
 	data: Pick<UserProfile, "firstName" | "lastName">
 ): Promise<UserProfile | undefined> => {
-	const token = localStorage.getItem("foliolinks_access_token");
+	const token = localStorage.getItem(accessTokenKeyName);
 	// if (!token) return;
 
 	try {
