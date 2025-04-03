@@ -17,6 +17,7 @@ const Login: FunctionComponent = () => {
 		handleSubmit,
 		register,
 		formState: { errors },
+		setError,
 	} = useForm<TLoginFormInputs>({
 		resolver: zodResolver(loginSchema),
 	});
@@ -26,8 +27,11 @@ const Login: FunctionComponent = () => {
 		onSuccess: () => {
 			navigate("/dashboard");
 		},
-		onError: (error) => {
-			console.log(error);
+		onError: (error: { error: string; errorCode: string }) => {
+			switch (error.errorCode) {
+				case "AuthApiError":
+					setError("email", { message: error.error });
+			}
 		},
 	});
 
