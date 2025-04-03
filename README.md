@@ -4,12 +4,12 @@
 
 ---
 
-This is a front end challenge where i convert a figma design file into code.
+The goal of this project is an attempt at creating a clone of link sharing websites/apps such as Linktree etc
 
-You can view the challenge here:
+The web design came from:
 
 https://www.frontendmentor.io/challenges/linksharing-app-Fbt7yweGsT
 
-Currently working on the backend for this project as well:
+The backend for this project:
 
-https://github.com/chungleee/portfolio-links-api
+https://github.com/chungleee/foliolinks-api
