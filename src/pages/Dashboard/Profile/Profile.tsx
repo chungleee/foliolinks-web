@@ -111,8 +111,6 @@ const Profile = () => {
 							inputContainerClassName={styles.textfields}
 							label='Username *'
 							type='text'
-							{...register("username")}
-							error={errors.firstName}
 							placeholder='John'
 							disabled={isProfileComplete || !!username}
 							defaultValue={username}
@@ -122,7 +120,7 @@ const Profile = () => {
 							inputContainerClassName={styles.textfields}
 							label='First name *'
 							type='text'
-							{...register("firstName")}
+							{...(!isProfileComplete && register("firstName"))}
 							error={errors.firstName}
 							placeholder='John'
 							disabled={isProfileComplete || !!firstName}
@@ -133,7 +131,8 @@ const Profile = () => {
 							inputContainerClassName={styles.textfields}
 							label='Last name *'
 							type='text'
-							{...register("lastName")}
+							{...(!isProfileComplete && register("lastName"))}
+							// {...register("lastName")}
 							error={errors.lastName}
 							placeholder='Doe'
 							disabled={isProfileComplete || !!lastName}
@@ -144,8 +143,6 @@ const Profile = () => {
 							inputContainerClassName={styles.textfields}
 							label='Email'
 							type='email'
-							// {...register("email")}
-							// error={errors.email}
 							placeholder='e.g. johndoe@email.com'
 							disabled={isProfileComplete || !!email}
 							defaultValue={email}

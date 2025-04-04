@@ -41,7 +41,7 @@ export const profileSchema = z.object({
 			if (!files?.length) return true;
 			return files[0]?.size <= MAX_FILE_SIZE;
 		}, "File needs to be 5MB or less"),
-	username: z.string().trim().min(1, { message: "Field is required" }),
+	// username: z.string().trim().min(1, { message: "Field is required" }),
 	firstName: z.string().trim().min(1, { message: "Field is required" }),
 	lastName: z.string().trim().min(1, { message: "Field is required" }),
 	// email: z
