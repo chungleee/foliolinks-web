@@ -39,3 +39,25 @@
 		}
 	}
 }
+
+.dialog {
+	&__exitIcon {
+		position: absolute;
+		top: 0;
+		right: 0;
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		row-gap: 1rem;
+	}
+
+	&__actionBtns {
+		display: flex;
+		column-gap: 0.5rem;
+	}
+}
