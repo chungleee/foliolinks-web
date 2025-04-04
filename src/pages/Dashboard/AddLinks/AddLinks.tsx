@@ -10,10 +10,9 @@ import DashboardLayout from "../DashboardLayout";
 import { Project } from "../../../types";
 import { UserContext } from "../../../contexts/UserContext";
 import { ProjectsContext } from "../../../contexts/ProjectsContext";
-import { useNavigate } from "react-router-dom";
 
 const AddLinks = () => {
-	const { userProfile, isProfileComplete } = useContext(UserContext);
+	const { userProfile } = useContext(UserContext);
 	const {
 		projects,
 		createProjects,
@@ -22,8 +21,6 @@ const AddLinks = () => {
 		isProjectsLoading,
 	} = useContext(ProjectsContext)!;
 	const ulRef = useRef<HTMLUListElement | null>(null);
-	const dialogRef = useRef<HTMLDialogElement | null>(null);
-	const navigate = useNavigate();
 
 	const {
 		control,
@@ -44,13 +41,7 @@ const AddLinks = () => {
 	const limitReached = limit <= fields.length;
 
 	useEffect(() => {
-		if (!isProfileComplete) {
-			dialogRef.current?.showModal();
-		}
-	}, [isProfileComplete]);
-
-	useEffect(() => {
-		if (projects) {
+		if (projects?.length) {
 			reset();
 			projects.forEach((project, index) => {
 				update(index, { ...project, project_id: project.id });
@@ -89,27 +80,9 @@ const AddLinks = () => {
 		deleteProject(data.project);
 	};
 
-	const handleCloseDialog = () => {
-		dialogRef.current?.close();
-	};
-
 	return (
 		<DashboardLayout>
 			<div className={styles.dashboard}>
-				{isProfileComplete === false && (
-					<dialog ref={dialogRef}>
-						<h1>Please complete your profile</h1>
-						<Button
-							variant='default'
-							onClick={() => navigate("/dashboard/profile")}
-						>
-							Profile
-						</Button>
-						<Button variant='secondary' onClick={handleCloseDialog}>
-							Skip
-						</Button>
-					</dialog>
-				)}
 				<section>
 					<p>
 						Add/edit/remove links below and then share all your links with the
@@ -125,7 +98,6 @@ const AddLinks = () => {
 					</Button>
 					{limitReached && <small>You've reached your limits.</small>}
 				</section>
-
 				<section className={styles.dashboard_create__container}>
 					{isProjectsLoading && <h1>Loading...</h1>}
 					<ul ref={ulRef}>
@@ -162,7 +134,6 @@ const AddLinks = () => {
 						)}
 					</ul>
 				</section>
-
 				<section>
 					<Button
 						onClick={handleSubmit(handleSave)}

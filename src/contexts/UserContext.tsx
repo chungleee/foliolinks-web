@@ -24,7 +24,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 		queryFn: getUserProfileAPI,
 	});
 	const { username, firstName, lastName, membership } = userProfileData || {};
-	const isProfileComplete = !!username || !!firstName || !!lastName;
+	const isProfileComplete = !!username && !!firstName && !!lastName;
 
 	const { data: userApiKeyData } = useQuery({
 		queryKey: ["userApiKey"],
