@@ -8,6 +8,7 @@ export const createLinkSchema = z.object({
 				.string()
 				.min(1, { message: "Project name is required" })
 				.trim(),
+			project_description: z.string().max(1000).trim().optional(),
 			project_url: z
 				.string()
 				.url()

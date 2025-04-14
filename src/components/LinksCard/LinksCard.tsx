@@ -42,14 +42,15 @@ const LinksCard = ({
 		initialProjectData ? false : undefined
 	);
 
-	const { project_name, project_url } = useWatch({
+	const { project_name, project_url, project_description } = useWatch({
 		control,
 		name: `projects.${cardIndex}`,
 	});
 
 	const isDiff =
 		initialProjectData?.project_name !== project_name ||
-		initialProjectData?.project_url !== project_url
+		initialProjectData?.project_url !== project_url ||
+		initialProjectData?.project_description !== project_description
 			? true
 			: false;
 
@@ -74,6 +75,7 @@ const LinksCard = ({
 										...initialProjectData,
 										project_name,
 										project_url,
+										project_description,
 									});
 								}
 							}}
