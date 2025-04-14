@@ -147,15 +147,15 @@ const Settings = () => {
 							readonly={domain ? true : false}
 						/>
 						<TextField
-							label='API key ID'
-							error={errors.apikeyId}
+							label='API key'
+							error={errors.apikey}
 							{...register("apikey")}
 							readonly={true}
 							type={apiKey ? "password" : "text"}
 						/>
 						<TextField
-							label='API key'
-							error={errors.apikey}
+							label='API key ID'
+							error={errors.apikeyId}
 							{...register("apikeyId")}
 							type={apikeyId ? "password" : "text"}
 							readonly={true}

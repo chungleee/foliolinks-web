@@ -9,6 +9,7 @@ import TextField from "../common/TextField/TextField";
 import { TCreateLinksValues } from "../../zod";
 import { Project, ProjectErrors } from "../../types";
 import { useState } from "react";
+import TextArea from "../common/TextArea/TextArea";
 
 interface LinksCardProps {
 	cardIndex: number;
@@ -41,14 +42,15 @@ const LinksCard = ({
 		initialProjectData ? false : undefined
 	);
 
-	const { project_name, project_url } = useWatch({
+	const { project_name, project_url, project_description } = useWatch({
 		control,
 		name: `projects.${cardIndex}`,
 	});
 
 	const isDiff =
 		initialProjectData?.project_name !== project_name ||
-		initialProjectData?.project_url !== project_url
+		initialProjectData?.project_url !== project_url ||
+		initialProjectData?.project_description !== project_description
 			? true
 			: false;
 
@@ -73,6 +75,7 @@ const LinksCard = ({
 										...initialProjectData,
 										project_name,
 										project_url,
+										project_description,
 									});
 								}
 							}}
@@ -120,6 +123,15 @@ const LinksCard = ({
 				error={errors?.project_name}
 				editing={initialProjectData ? !isEditing : isEditing}
 				defaultValue={`projects.${cardIndex}.project_name`}
+			/>
+			<TextArea
+				label='Description'
+				iconVariant='text'
+				placeholder='Enter the name of your project'
+				inputContainerClassName={styles.create_links_card__textfields}
+				{...(register && register(`projects.${cardIndex}.project_description`))}
+				error={errors?.project_description}
+				editing={initialProjectData ? !isEditing : isEditing}
 			/>
 			<TextField
 				label='Link'

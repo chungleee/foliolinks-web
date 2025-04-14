@@ -14,9 +14,11 @@ import {
 	FiLogOut,
 	FiSettings,
 	FiXCircle,
+	FiFileText,
 } from "react-icons/fi";
 
 type Variants =
+	| "text"
 	| "link"
 	| "mail"
 	| "lock"
@@ -40,6 +42,9 @@ interface IconProps {
 
 const Icon = ({ variant, ...props }: IconProps) => {
 	switch (variant) {
+		case "text": {
+			return <FiFileText {...props} />;
+		}
 		case "link": {
 			return <FiLink {...props} />;
 		}
