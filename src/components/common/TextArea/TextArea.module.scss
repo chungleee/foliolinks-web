@@ -1,0 +1,48 @@
+@use "../../../variables";
+
+.textarea {
+	display: flex;
+	align-items: center;
+	padding-top: 0.75rem;
+	padding-bottom: 0.75rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	border: 1px solid variables.$med-grey;
+	border-radius: 8px;
+
+	&_icon {
+		margin-right: 1rem;
+		min-width: 1em;
+		min-height: 1em;
+	}
+
+	textarea {
+		border: none;
+		width: 100%;
+		background-color: inherit;
+		resize: vertical;
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	&:focus-within {
+		border-color: variables.$purple;
+	}
+}
+
+.error {
+	border-color: variables.$red;
+
+	&_message {
+		white-space: nowrap;
+		color: variables.$red;
+		line-height: 150%;
+	}
+}
+
+.label {
+	font-size: 0.85rem;
+	text-transform: capitalize;
+}
