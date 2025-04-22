@@ -22,9 +22,15 @@ export const createLinkSchema = z.object({
 export type TCreateLinksValues = z.infer<typeof createLinkSchema>;
 
 // ***** PROFILE FORM SCHEMA / TYPES *****
-const ACCEPTED_FORMATS = ["image/jpg", "image/jpeg", "image/webp", "image/png"];
+export const ACCEPTED_FORMATS = [
+	"image/jpg",
+	"image/jpeg",
+	"image/webp",
+	"image/png",
+	"image/gif",
+];
 
-const MAX_FILE_SIZE = 5000000;
+export const MAX_FILE_SIZE = 5000000;
 
 export const profileSchema = z.object({
 	profilePic: z
@@ -42,24 +48,24 @@ export const profileSchema = z.object({
 			if (!files?.length) return true;
 			return files[0]?.size <= MAX_FILE_SIZE;
 		}, "File needs to be 5MB or less"),
-	// username: z.string().trim().min(1, { message: "Field is required" }),
+	username: z.string().trim().min(1, { message: "Field is required" }),
 	firstName: z.string().trim().min(1, { message: "Field is required" }),
 	lastName: z.string().trim().min(1, { message: "Field is required" }),
-	// email: z
-	// 	.string()
-	// 	.optional()
-	// 	.transform((value) => {
-	// 		if (!value) return;
-	// 		return value;
-	// 	})
-	// 	.pipe(
-	// 		z
-	// 			.string()
-	// 			.email({ message: "Invalie email address" })
-	// 			.trim()
-	// 			.toLowerCase()
-	// 			.optional()
-	// 	),
+	email: z
+		.string()
+		.optional()
+		.transform((value) => {
+			if (!value) return;
+			return value;
+		})
+		.pipe(
+			z
+				.string()
+				.email({ message: "Invalie email address" })
+				.trim()
+				.toLowerCase()
+				.optional()
+		),
 });
 
 export type TProfileFormValues = z.infer<typeof profileSchema>;

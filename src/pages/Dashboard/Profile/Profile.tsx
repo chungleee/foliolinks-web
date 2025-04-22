@@ -29,6 +29,7 @@ const Profile = () => {
 		handleSubmit,
 		register,
 		formState: { errors },
+		setValue,
 	} = useForm<TProfileFormValues>({
 		resolver: zodResolver(profileSchema),
 		mode: "onSubmit",
@@ -51,15 +52,30 @@ const Profile = () => {
 		formData.append("profilePic", data.profilePic[0]);
 		formData.append("firstName", data.firstName);
 		formData.append("lastName", data.lastName);
+		console.log("form data: ", formData);
 		createUserProfileMutation.mutate(formData);
 	};
 
 	useEffect(() => {
+		if (isProfileComplete && username && firstName && lastName && email) {
+			setValue("username", username);
+			setValue("firstName", firstName);
+			setValue("lastName", lastName);
+			setValue("email", email);
+		}
 		if (labelRef.current) {
 			labelRef.current.style.backgroundImage = `url(${previewImg})`;
 			labelRef.current.style.filter = "grayscale(15%)";
 		}
-	}, [previewImg]);
+	}, [
+		isProfileComplete,
+		username,
+		firstName,
+		lastName,
+		email,
+		setValue,
+		previewImg,
+	]);
 
 	return (
 		<DashboardLayout>
@@ -135,7 +151,6 @@ const Profile = () => {
 							label='Last name *'
 							type='text'
 							{...(!isProfileComplete && register("lastName"))}
-							// {...register("lastName")}
 							error={errors.lastName}
 							placeholder='Doe'
 							disabled={isProfileComplete || !!lastName}
@@ -157,7 +172,7 @@ const Profile = () => {
 						<Button
 							variant='default'
 							type='submit'
-							disabled={isProfileComplete}
+							// disabled={isProfileComplete}
 						>
 							Save
 						</Button>
