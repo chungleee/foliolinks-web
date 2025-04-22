@@ -22,7 +22,6 @@ const Profile = () => {
 	const [error, setError] = useState("");
 	const { userProfile, isProfileComplete } = useContext(UserContext);
 	const { username, firstName, lastName, email } = userProfile ?? {};
-
 	const [previewImg, setPreviewImg] = useState<string>("");
 	const labelRef = useRef<HTMLLabelElement>(null);
 
@@ -48,7 +47,11 @@ const Profile = () => {
 	});
 
 	const handleSubmitUserProfile = (data: TUserInfoInputs) => {
-		createUserProfileMutation.mutate(data);
+		const formData = new FormData();
+		formData.append("profilePic", data.profilePic[0]);
+		formData.append("firstName", data.firstName);
+		formData.append("lastName", data.lastName);
+		createUserProfileMutation.mutate(formData);
 	};
 
 	useEffect(() => {
