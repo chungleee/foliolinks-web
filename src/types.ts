@@ -21,6 +21,7 @@ export interface UserProfile {
 	username: string;
 	membership: UserMembership;
 	email: string;
+	avatar: string | null;
 }
 
 export type UserMembership = "BASIC" | "PRO";

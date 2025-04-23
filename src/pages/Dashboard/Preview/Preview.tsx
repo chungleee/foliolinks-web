@@ -15,7 +15,7 @@ const Preview = () => {
 	const { userProfile } = useContext(UserContext);
 	const { projects, isProjectsLoading } = useContext(ProjectsContext)!;
 
-	const { firstName, lastName, email } = userProfile || {};
+	const { firstName, lastName, email, avatar } = userProfile || {};
 
 	const handleCopyToClipboard = async () => {
 		await navigator.clipboard.writeText("testcopytoclipboard.com");
@@ -44,7 +44,7 @@ const Preview = () => {
 			<main>
 				<section className={styles.user_bio}>
 					<div className={styles.user_bio_avatar}>
-						<img alt='avatar' />
+						<img alt='avatar' src={avatar ? avatar : undefined} />
 					</div>
 					<div className={styles.user_bio_description}>
 						<h4>{`${email}`}</h4>

@@ -21,10 +21,10 @@ const Profile = () => {
 	const queryClient = useQueryClient();
 	const [error, setError] = useState("");
 	const { userProfile, isProfileComplete } = useContext(UserContext);
-	const { username, firstName, lastName, email } = userProfile ?? {};
+	const { username, firstName, lastName, email, avatar } = userProfile ?? {};
 	const [previewImg, setPreviewImg] = useState<string>("");
 	const labelRef = useRef<HTMLLabelElement>(null);
-
+	console.log("avatar: ", avatar);
 	const {
 		handleSubmit,
 		register,
@@ -52,7 +52,7 @@ const Profile = () => {
 		formData.append("profilePic", data.profilePic[0]);
 		formData.append("firstName", data.firstName);
 		formData.append("lastName", data.lastName);
-		console.log("form data: ", formData);
+		// console.log("form data: ", formData);
 		createUserProfileMutation.mutate(formData);
 	};
 
@@ -64,7 +64,9 @@ const Profile = () => {
 			setValue("email", email);
 		}
 		if (labelRef.current) {
-			labelRef.current.style.backgroundImage = `url(${previewImg})`;
+			if (avatar) labelRef.current.style.backgroundImage = `url(${avatar})`;
+			if (previewImg)
+				labelRef.current.style.backgroundImage = `url(${previewImg})`;
 			labelRef.current.style.filter = "grayscale(15%)";
 		}
 	}, [
@@ -74,6 +76,7 @@ const Profile = () => {
 		lastName,
 		email,
 		setValue,
+		avatar,
 		previewImg,
 	]);
 
