@@ -31,11 +31,10 @@ export const getUserProfileAPI = async (): Promise<UserProfile | undefined> => {
 };
 
 export const createUserProfileAPI = async (
-	data: Pick<UserProfile, "firstName" | "lastName">
+	data: FormData
 ): Promise<UserProfile | undefined> => {
 	const token = localStorage.getItem(accessTokenKeyName);
 	// if (!token) return;
-
 	try {
 		const url = import.meta.env.DEV
 			? import.meta.env.VITE_DEV_API
@@ -43,10 +42,9 @@ export const createUserProfileAPI = async (
 
 		const result = await fetch(`${url}/api/users/profile/create`, {
 			method: "POST",
-			body: JSON.stringify(data),
+			body: data,
 			headers: {
 				Authorization: `Bearer ${token}`,
-				"Content-Type": "application/json",
 			},
 		});
 

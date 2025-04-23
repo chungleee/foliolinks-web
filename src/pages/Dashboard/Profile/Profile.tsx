@@ -21,15 +21,15 @@ const Profile = () => {
 	const queryClient = useQueryClient();
 	const [error, setError] = useState("");
 	const { userProfile, isProfileComplete } = useContext(UserContext);
-	const { username, firstName, lastName, email } = userProfile ?? {};
-
+	const { username, firstName, lastName, email, avatar } = userProfile ?? {};
 	const [previewImg, setPreviewImg] = useState<string>("");
 	const labelRef = useRef<HTMLLabelElement>(null);
-
+	console.log("avatar: ", avatar);
 	const {
 		handleSubmit,
 		register,
 		formState: { errors },
+		setValue,
 	} = useForm<TProfileFormValues>({
 		resolver: zodResolver(profileSchema),
 		mode: "onSubmit",
@@ -48,15 +48,36 @@ const Profile = () => {
 	});
 
 	const handleSubmitUserProfile = (data: TUserInfoInputs) => {
-		createUserProfileMutation.mutate(data);
+		const formData = new FormData();
+		formData.append("profilePic", data.profilePic[0]);
+		formData.append("firstName", data.firstName);
+		formData.append("lastName", data.lastName);
+		createUserProfileMutation.mutate(formData);
 	};
 
 	useEffect(() => {
+		if (isProfileComplete && username && firstName && lastName && email) {
+			setValue("username", username);
+			setValue("firstName", firstName);
+			setValue("lastName", lastName);
+			setValue("email", email);
+		}
 		if (labelRef.current) {
-			labelRef.current.style.backgroundImage = `url(${previewImg})`;
+			if (avatar) labelRef.current.style.backgroundImage = `url(${avatar})`;
+			if (previewImg)
+				labelRef.current.style.backgroundImage = `url(${previewImg})`;
 			labelRef.current.style.filter = "grayscale(15%)";
 		}
-	}, [previewImg]);
+	}, [
+		isProfileComplete,
+		username,
+		firstName,
+		lastName,
+		email,
+		setValue,
+		avatar,
+		previewImg,
+	]);
 
 	return (
 		<DashboardLayout>
@@ -132,7 +153,6 @@ const Profile = () => {
 							label='Last name *'
 							type='text'
 							{...(!isProfileComplete && register("lastName"))}
-							// {...register("lastName")}
 							error={errors.lastName}
 							placeholder='Doe'
 							disabled={isProfileComplete || !!lastName}
@@ -154,7 +174,7 @@ const Profile = () => {
 						<Button
 							variant='default'
 							type='submit'
-							disabled={isProfileComplete}
+							// disabled={isProfileComplete}
 						>
 							Save
 						</Button>
