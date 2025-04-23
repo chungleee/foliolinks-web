@@ -52,7 +52,6 @@ const Profile = () => {
 		formData.append("profilePic", data.profilePic[0]);
 		formData.append("firstName", data.firstName);
 		formData.append("lastName", data.lastName);
-		// console.log("form data: ", formData);
 		createUserProfileMutation.mutate(formData);
 	};
 
