@@ -28,7 +28,11 @@ const CreateUserProfile = () => {
 	});
 
 	const handleSubmitUserProfile = (data: TUserInfoInputs) => {
-		createUserProfileMutation.mutate(data);
+		const formData = new FormData();
+		formData.append("firstName", data.firstName);
+		formData.append("lastName", data.lastName);
+		createUserProfileMutation.mutate(formData);
+		// createUserProfileMutation.mutate(data);
 	};
 
 	return (
