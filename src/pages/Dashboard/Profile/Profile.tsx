@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Cropper from "react-easy-crop";
 
 import styles from "./Profile.module.scss";
 
@@ -18,13 +19,19 @@ import Icon from "../../../components/common/Icon";
 import { createUserProfileAPI } from "../../../api/user";
 
 const Profile = () => {
-	const queryClient = useQueryClient();
-	const [error, setError] = useState("");
-	const { userProfile, isProfileComplete } = useContext(UserContext);
-	const { username, firstName, lastName, email, avatar } = userProfile ?? {};
 	const [previewImg, setPreviewImg] = useState<string>("");
+	const [error, setError] = useState("");
+	const [crop, setCrop] = useState({ x: 0, y: 0 });
+	const [zoom, setZoom] = useState(1);
+
 	const labelRef = useRef<HTMLLabelElement>(null);
-	console.log("avatar: ", avatar);
+
+	const { userProfile, isProfileComplete } = useContext(UserContext);
+
+	const queryClient = useQueryClient();
+
+	const { username, firstName, lastName, email, avatar } = userProfile ?? {};
+
 	const {
 		handleSubmit,
 		register,
@@ -53,6 +60,11 @@ const Profile = () => {
 		formData.append("firstName", data.firstName);
 		formData.append("lastName", data.lastName);
 		createUserProfileMutation.mutate(formData);
+	};
+
+	const handleCropComplete = (croppedArea, croppedAreaPixels) => {
+		console.log("croppedArea: ", croppedArea);
+		console.log("croppedAreaPixels: ", croppedAreaPixels);
 	};
 
 	useEffect(() => {
@@ -94,29 +106,70 @@ const Profile = () => {
 					<div className={styles.profile__form_section__image_upload}>
 						<p>Profile picture</p>
 						<div>
-							<label ref={labelRef}>
-								<Icon
-									className={previewImg ? styles.uploaded_img_text : ""}
-									variant='image'
-								/>
-								{previewImg ? (
-									<span className={styles.uploaded_img_text}>Change Image</span>
-								) : (
-									<span>+ Upload Image</span>
-								)}
-								<input
-									type='file'
-									{...register("profilePic", {
-										onChange: (event) => {
-											const file = event.target.files[0];
-											setPreviewImg(URL.createObjectURL(file));
-										},
-									})}
-									accept='image/jpg, image/jpeg, image/webp, image/png'
-								/>
-							</label>
+							{!previewImg && (
+								<label ref={labelRef}>
+									<Icon
+										className={previewImg ? styles.uploaded_img_text : ""}
+										variant='image'
+									/>
+									{previewImg ? (
+										<span className={styles.uploaded_img_text}>
+											Change Image
+										</span>
+									) : (
+										<span>+ Upload Image</span>
+									)}
+									<input
+										type='file'
+										{...register("profilePic", {
+											onChange: (event) => {
+												const file = event.target.files[0];
+												const objUrl = URL.createObjectURL(file);
+												setPreviewImg(objUrl);
+											},
+										})}
+										accept='image/jpg, image/jpeg, image/webp, image/png'
+									/>
+								</label>
+							)}
+							{previewImg && (
+								<div>
+									<div
+										style={{
+											position: "relative",
+											height: "250px",
+											width: "250px",
+										}}
+									>
+										<Cropper
+											image={previewImg}
+											crop={crop}
+											onCropChange={setCrop}
+											cropShape='round'
+											aspect={1}
+											zoom={zoom}
+											onCropComplete={handleCropComplete}
+											objectFit='contain'
+										/>
+									</div>
+									<div>
+										<input
+											type='range'
+											value={zoom}
+											min={1}
+											max={3}
+											step={0.1}
+											aria-labelledby='Zoom'
+											onChange={(e) => {
+												setZoom(Number(e.target.value));
+											}}
+											className='zoom-range'
+										/>
+									</div>
+								</div>
+							)}
 							<small>
-								Image must be below 5MB. Use WebP, PNG or JPG formats.
+								Image must be below 2MB. Use WebP, PNG or JPG formats.
 							</small>
 							{errors.profilePic && (
 								<small className={styles.error}>

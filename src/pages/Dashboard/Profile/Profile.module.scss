@@ -26,6 +26,9 @@
 			border-radius: 8px;
 		}
 
+		&__image_crop {
+		}
+
 		&__image_upload {
 			@include form-container();
 			display: flex;
