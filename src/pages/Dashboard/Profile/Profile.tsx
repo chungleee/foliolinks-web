@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Cropper from "react-easy-crop";
+import Cropper, { Area, Point } from "react-easy-crop";
 
 import styles from "./Profile.module.scss";
 
@@ -20,8 +20,9 @@ import { createUserProfileAPI } from "../../../api/user";
 
 const Profile = () => {
 	const [previewImg, setPreviewImg] = useState<string>("");
+	const [croppedImage, setCroppedImage] = useState<string | null>(null);
 	const [error, setError] = useState("");
-	const [crop, setCrop] = useState({ x: 0, y: 0 });
+	const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
 	const [zoom, setZoom] = useState(1);
 
 	const labelRef = useRef<HTMLLabelElement>(null);
@@ -54,17 +55,85 @@ const Profile = () => {
 		onError: (error) => setError(error.message),
 	});
 
-	const handleSubmitUserProfile = (data: TUserInfoInputs) => {
+	const handleSubmitUserProfile = async (data: TUserInfoInputs) => {
 		const formData = new FormData();
-		formData.append("profilePic", data.profilePic[0]);
+
+		if (croppedImage) {
+			try {
+				const response = await fetch(croppedImage);
+				const blob = await response.blob();
+
+				const croppedImageFile = new File([blob], `${username}-avatar.jpg`, {
+					type: "image/jpeg",
+				});
+
+				formData.append("profilePic", croppedImageFile);
+			} catch (error) {
+				console.log("submission cropped image error: ", error);
+			}
+		} else {
+			formData.append("profilePic", data.profilePic[0]);
+		}
 		formData.append("firstName", data.firstName);
 		formData.append("lastName", data.lastName);
 		createUserProfileMutation.mutate(formData);
 	};
 
-	const handleCropComplete = (croppedArea, croppedAreaPixels) => {
-		console.log("croppedArea: ", croppedArea);
-		console.log("croppedAreaPixels: ", croppedAreaPixels);
+	const handleCropComplete = async (
+		croppedArea: Area,
+		croppedAreaPixels: Area
+	) => {
+		try {
+			const croppedImageUrl = await handleGetCroppedImg(
+				previewImg,
+				croppedAreaPixels
+			);
+			setCroppedImage(croppedImageUrl as string);
+		} catch (error) {
+			console.log("image cropping error: ", error);
+		}
+	};
+
+	const handleGetCroppedImg = (imageSrc: string, croppedAreaPixels: Area) => {
+		return new Promise((resolve, reject) => {
+			const image = new Image();
+			image.src = imageSrc;
+
+			image.onload = () => {
+				const canvas = document.createElement("canvas");
+				const ctx = canvas.getContext("2d");
+
+				const { width, height } = croppedAreaPixels;
+
+				canvas.width = width;
+				canvas.height = height;
+
+				ctx?.drawImage(
+					image,
+					croppedAreaPixels.x,
+					croppedAreaPixels.y,
+					width,
+					height,
+					0,
+					0,
+					width,
+					height
+				);
+
+				canvas.toBlob((blob) => {
+					if (!blob) {
+						reject(new Error("Canvas is empty"));
+						return;
+					}
+					const fileUrl = URL.createObjectURL(blob);
+					resolve(fileUrl);
+				}, "image/jpeg");
+			};
+
+			image.onerror = (error) => {
+				reject(error);
+			};
+		});
 	};
 
 	useEffect(() => {
@@ -125,6 +194,7 @@ const Profile = () => {
 											onChange: (event) => {
 												const file = event.target.files[0];
 												const objUrl = URL.createObjectURL(file);
+
 												setPreviewImg(objUrl);
 											},
 										})}

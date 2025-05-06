@@ -15,10 +15,12 @@ const Preview = () => {
 	const { userProfile } = useContext(UserContext);
 	const { projects, isProjectsLoading } = useContext(ProjectsContext)!;
 
-	const { firstName, lastName, email, avatar } = userProfile || {};
+	const { firstName, lastName, email, avatar, username } = userProfile || {};
 
 	const handleCopyToClipboard = async () => {
-		await navigator.clipboard.writeText("testcopytoclipboard.com");
+		await navigator.clipboard.writeText(
+			`https://foliolinks-api.leonchung.ca/${username}`
+		);
 		setShowSnackbar(true);
 
 		setTimeout(() => setShowSnackbar(false), 3000);
