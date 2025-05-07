@@ -80,7 +80,7 @@ const Profile = () => {
 	};
 
 	const handleCropComplete = async (
-		croppedArea: Area,
+		_croppedArea: Area,
 		croppedAreaPixels: Area
 	) => {
 		try {
