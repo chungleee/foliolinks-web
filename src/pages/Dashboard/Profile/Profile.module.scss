@@ -26,9 +26,6 @@
 			border-radius: 8px;
 		}
 
-		&__image_crop {
-		}
-
 		&__image_upload {
 			@include form-container();
 			display: flex;
@@ -51,7 +48,7 @@
 				background-size: cover;
 				background-repeat: no-repeat;
 				background-position: center center;
-				border-radius: 8px;
+				border-radius: 100193px;
 				color: variables.$purple;
 				cursor: pointer;
 				display: flex;
