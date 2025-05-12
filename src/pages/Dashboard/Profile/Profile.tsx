@@ -50,6 +50,7 @@ const Profile = () => {
 				username: data?.username,
 				firstName: data?.firstName,
 				lastName: data?.lastName,
+				avatar: data?.avatar,
 			});
 		},
 		onError: (error) => setError(error.message),
@@ -68,6 +69,7 @@ const Profile = () => {
 				});
 
 				formData.append("profilePic", croppedImageFile);
+				setPreviewImg("");
 			} catch (error) {
 				console.log("submission cropped image error: ", error);
 			}
@@ -144,10 +146,13 @@ const Profile = () => {
 			setValue("email", email);
 		}
 		if (labelRef.current) {
-			if (avatar) labelRef.current.style.backgroundImage = `url(${avatar})`;
-			if (previewImg)
+			if (avatar) {
+				labelRef.current.style.backgroundImage = `url(${avatar})`;
+			}
+			if (previewImg) {
 				labelRef.current.style.backgroundImage = `url(${previewImg})`;
-			labelRef.current.style.filter = "grayscale(15%)";
+				labelRef.current.style.filter = "grayscale(15%)";
+			}
 		}
 	}, [
 		isProfileComplete,
