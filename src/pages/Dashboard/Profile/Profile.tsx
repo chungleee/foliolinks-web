@@ -148,7 +148,6 @@ const Profile = () => {
 		if (labelRef.current) {
 			if (avatar) {
 				labelRef.current.style.backgroundImage = `url(${avatar})`;
-				labelRef.current.style.borderRadius = "100193px";
 			}
 			if (previewImg) {
 				labelRef.current.style.backgroundImage = `url(${previewImg})`;
