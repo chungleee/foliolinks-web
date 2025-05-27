@@ -50,11 +50,29 @@ const CheckoutForm = () => {
 			checkout
 		);
 
-		if (!isValid) setError("email", message as ErrorOption);
+		if (!isValid) {
+			setError("email", message as ErrorOption);
+			return;
+		}
 	};
 
-	const onFormSubmit = (data: Schema) => {
+	const onFormSubmit = async (data: Schema) => {
 		console.log(data);
+		const { isValid, message } = await handleValidateEmail(
+			data.email,
+			checkout
+		);
+
+		if (!isValid) {
+			setError("email", message as ErrorOption);
+			return;
+		}
+
+		const confirmResult = await checkout.confirm();
+
+		if (confirmResult.type === "error") {
+			setError("email", confirmResult.error.message as ErrorOption);
+		}
 	};
 
 	return (
