@@ -1,16 +1,8 @@
-import {
-	RefObject,
-	useContext,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { CheckoutProvider } from "@stripe/react-stripe-js";
 
 import styles from "./Settings.module.scss";
 
@@ -21,12 +13,11 @@ import DashboardLayout from "../DashboardLayout";
 import Icon from "../../../components/common/Icon";
 import { Button } from "../../../components/common/Button/Button";
 import TextField from "../../../components/common/TextField/TextField";
+import StripeCheckoutForm from "../../../components/Stripe/StripeCheckoutForm";
 
 import { generateApiKeyAPI, revokeApiKeyAPI } from "../../../api/apikey";
 import { apikeyFormSchema, TApikeyFormValues } from "../../../zod";
 import { handleDeleteAccountAPI } from "../../../api/auth";
-import { stripePromise } from "../../../config/stripe";
-import CheckoutForm from "../../../components/Stripe/CheckoutForm";
 
 const Settings = () => {
 	const [revokeMsg, setRevokeMsg] = useState<{
@@ -151,9 +142,16 @@ const Settings = () => {
 
 				<section className={styles.settings__main}>
 					<h3>Membership Tier</h3>
-					<p>Want to upgrade to PRO?</p>
-					<Button onClick={() => setLoadStripeForm(true)}>Upgrade</Button>
+					{!loadStripeForm && (
+						<>
+							<p>Want to upgrade to PRO?</p>
+							<Button onClick={() => setLoadStripeForm(true)}>Upgrade</Button>
+						</>
+					)}
 					{loadStripeForm && <StripeCheckoutForm />}
+					{loadStripeForm && (
+						<Button onClick={() => setLoadStripeForm(false)}>Cancel</Button>
+					)}
 				</section>
 
 				<section>
@@ -226,44 +224,6 @@ interface DeleteWarningModalProps {
 	dialogRef: RefObject<HTMLDialogElement>;
 	handleDeleteAccount: () => void;
 }
-
-const StripeCheckoutForm = () => {
-	const url = import.meta.env.DEV
-		? import.meta.env.VITE_DEV_API
-		: import.meta.env.VITE_PROD_URL;
-
-	const accessTokenKeyName = import.meta.env.DEV
-		? import.meta.env.VITE_DEV_ACCESS_TOKEN
-		: import.meta.env.VITE_PROD_ACCESS_TOKEN;
-	const token = localStorage.getItem(accessTokenKeyName);
-
-	const handleCheckoutSessionPromise = useMemo(() => {
-		return fetch(`${url}/api/payment/create-checkout-session`, {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		})
-			.then((res) => res.json())
-			.then((data) => data.clientSecret);
-	}, [url, token]);
-
-	return (
-		<div>
-			<h1>stripe checkout form</h1>
-			<div>
-				<CheckoutProvider
-					stripe={stripePromise}
-					options={{
-						fetchClientSecret: () => handleCheckoutSessionPromise,
-					}}
-				>
-					<CheckoutForm />
-				</CheckoutProvider>
-			</div>
-		</div>
-	);
-};
 
 const DeleteWarningModal = ({
 	dialogRef,

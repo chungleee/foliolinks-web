@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ErrorOption, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,6 +23,7 @@ type Schema = z.infer<typeof schema>;
 
 const CheckoutForm = () => {
 	const checkout = useCheckout();
+
 	const {
 		register,
 		handleSubmit,
@@ -72,6 +73,10 @@ const CheckoutForm = () => {
 
 		if (confirmResult.type === "error") {
 			setError("email", confirmResult.error.message as ErrorOption);
+		}
+
+		if (confirmResult.type === "success") {
+			// send POST request to upgrade users membership to PRO
 		}
 	};
 
