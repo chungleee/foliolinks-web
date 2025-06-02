@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { ErrorOption, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +8,8 @@ import {
 } from "@stripe/react-stripe-js";
 
 import TextField from "../common/TextField/TextField";
+import { handleUpgradeMembership } from "../../api/stripe";
+import { useState } from "react";
 
 const schema = z.object({
 	email: z
@@ -22,6 +23,7 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 const CheckoutForm = () => {
+	const [membershipUpgraded, setMembershipUpgraded] = useState(false);
 	const checkout = useCheckout();
 
 	const {
@@ -58,7 +60,6 @@ const CheckoutForm = () => {
 	};
 
 	const onFormSubmit = async (data: Schema) => {
-		console.log(data);
 		const { isValid, message } = await handleValidateEmail(
 			data.email,
 			checkout
@@ -69,7 +70,10 @@ const CheckoutForm = () => {
 			return;
 		}
 
-		const confirmResult = await checkout.confirm();
+		const confirmResult = await checkout.confirm({
+			redirect: "if_required",
+			returnUrl: "https://localhost:5173/dashboard/settings",
+		});
 
 		if (confirmResult.type === "error") {
 			setError("email", confirmResult.error.message as ErrorOption);
@@ -77,8 +81,22 @@ const CheckoutForm = () => {
 
 		if (confirmResult.type === "success") {
 			// send POST request to upgrade users membership to PRO
+			const confirmUpgrade = await handleUpgradeMembership();
+
+			if (confirmUpgrade.type === "success") {
+				setMembershipUpgraded(true);
+			}
 		}
 	};
+
+	if (membershipUpgraded) {
+		return (
+			<div>
+				<h1>Success!</h1>
+				<h3>Payment successful and membership has been upgraded</h3>
+			</div>
+		);
+	}
 
 	return (
 		<form onSubmit={handleSubmit(onFormSubmit)}>
