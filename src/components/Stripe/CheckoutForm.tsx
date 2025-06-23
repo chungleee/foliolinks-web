@@ -80,7 +80,6 @@ const CheckoutForm = () => {
 		}
 
 		if (confirmResult.type === "success") {
-			// send POST request to upgrade users membership to PRO
 			const confirmUpgrade = await handleUpgradeMembership();
 
 			if (confirmUpgrade.type === "success") {

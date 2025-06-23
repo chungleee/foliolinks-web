@@ -3,6 +3,7 @@ import { CheckoutProvider } from "@stripe/react-stripe-js";
 import { stripePromise } from "../../config/stripe";
 
 import CheckoutForm from "./CheckoutForm";
+
 import {
 	stripeCheckoutSessionPromiseAPI,
 	stripeRemoveCheckoutSessionAPI,

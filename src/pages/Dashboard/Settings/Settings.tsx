@@ -142,7 +142,7 @@ const Settings = () => {
 
 				<section className={styles.settings__main}>
 					<h3>Membership Tier</h3>
-					{!loadStripeForm && (
+					{!isMemberPro && !loadStripeForm && (
 						<>
 							<p>Want to upgrade to PRO?</p>
 							<Button onClick={() => setLoadStripeForm(true)}>Upgrade</Button>
@@ -152,6 +152,10 @@ const Settings = () => {
 					{loadStripeForm && (
 						<Button onClick={() => setLoadStripeForm(false)}>Cancel</Button>
 					)}
+					<>
+						<p>Membership Tier: {userProfile?.membership}</p>
+						<p>Valid until:</p>
+					</>
 				</section>
 
 				<section>
