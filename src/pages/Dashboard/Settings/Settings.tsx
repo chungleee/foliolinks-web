@@ -1,23 +1,31 @@
-import styles from "./Settings.module.scss";
-import DashboardLayout from "../DashboardLayout";
-import TextField from "../../../components/common/TextField/TextField";
-import { Button } from "../../../components/common/Button/Button";
-import { generateApiKeyAPI, revokeApiKeyAPI } from "../../../api/apikey";
+import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { apikeyFormSchema, TApikeyFormValues } from "../../../zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { RefObject, useContext, useEffect, useRef, useState } from "react";
-import { UserContext } from "../../../contexts/UserContext";
-import { handleDeleteAccountAPI } from "../../../api/auth";
 import { useNavigate } from "react-router-dom";
+
+import styles from "./Settings.module.scss";
+
+import { UserContext } from "../../../contexts/UserContext";
+
+import DashboardLayout from "../DashboardLayout";
+
 import Icon from "../../../components/common/Icon";
+import { Button } from "../../../components/common/Button/Button";
+import TextField from "../../../components/common/TextField/TextField";
+import StripeCheckoutForm from "../../../components/Stripe/StripeCheckoutForm";
+
+import { generateApiKeyAPI, revokeApiKeyAPI } from "../../../api/apikey";
+import { apikeyFormSchema, TApikeyFormValues } from "../../../zod";
+import { handleDeleteAccountAPI } from "../../../api/auth";
+import { handleUnsubscribeMembershipAPI } from "../../../api/stripe";
 
 const Settings = () => {
 	const [revokeMsg, setRevokeMsg] = useState<{
 		success?: string;
 		error?: string;
 	}>({ success: "", error: "" });
+	const [loadStripeForm, setLoadStripeForm] = useState(false);
 
 	const { userApiKey, userProfile } = useContext(UserContext);
 	const navigate = useNavigate();
@@ -112,8 +120,16 @@ const Settings = () => {
 		},
 	});
 
+	const unsubscribeMembershipMutation = useMutation({
+		mutationFn: handleUnsubscribeMembershipAPI,
+	});
+
 	const handleDeleteAccount = () => {
 		deleteAccountMutation.mutate();
+	};
+
+	const handleUnsubscribeMembership = () => {
+		unsubscribeMembershipMutation.mutate();
 	};
 
 	const isMemberPro = userProfile?.membership === "PRO";
@@ -131,6 +147,33 @@ const Settings = () => {
 						account deletion.
 					</p>
 					<h2>Account Settings</h2>
+				</section>
+
+				<section className={styles.settings__main}>
+					<h3>Membership Tier</h3>
+					{!isMemberPro && !loadStripeForm && (
+						<>
+							<p>Want to upgrade to PRO?</p>
+							<Button onClick={() => setLoadStripeForm(true)}>Upgrade</Button>
+						</>
+					)}
+					{loadStripeForm && <StripeCheckoutForm />}
+					{loadStripeForm && (
+						<Button onClick={() => setLoadStripeForm(false)}>Cancel</Button>
+					)}
+					{isMemberPro && (
+						<>
+							<p>Membership Tier: {userProfile?.membership}</p>
+							<p>Valid until:</p>
+							<Button
+								type='button'
+								variant='secondary'
+								onClick={handleUnsubscribeMembership}
+							>
+								Unsubscribe
+							</Button>
+						</>
+					)}
 				</section>
 
 				<section>
