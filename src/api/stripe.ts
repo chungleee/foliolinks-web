@@ -84,3 +84,30 @@ export const handleUpgradeMembership = async (): Promise<{
 
 	return data;
 };
+
+export const handleUnsubscribeMembershipAPI = async (): Promise<{
+	type: "success" | "error";
+	updatedUserProfile: UserProfile;
+}> => {
+	const url = import.meta.env.DEV
+		? import.meta.env.VITE_DEV_API
+		: import.meta.env.VITE_PROD_URL;
+
+	const accessTokenKeyName = import.meta.env.DEV
+		? import.meta.env.VITE_DEV_ACCESS_TOKEN
+		: import.meta.env.VITE_PROD_ACCESS_TOKEN;
+
+	const token = localStorage.getItem(accessTokenKeyName);
+
+	const result = await fetch(`${url}/api/payment/unsubscribe`, {
+		method: "DELETE",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+		},
+	});
+
+	const data = await result.json();
+
+	return data;
+};

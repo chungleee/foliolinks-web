@@ -18,6 +18,7 @@ import StripeCheckoutForm from "../../../components/Stripe/StripeCheckoutForm";
 import { generateApiKeyAPI, revokeApiKeyAPI } from "../../../api/apikey";
 import { apikeyFormSchema, TApikeyFormValues } from "../../../zod";
 import { handleDeleteAccountAPI } from "../../../api/auth";
+import { handleUnsubscribeMembershipAPI } from "../../../api/stripe";
 
 const Settings = () => {
 	const [revokeMsg, setRevokeMsg] = useState<{
@@ -119,8 +120,16 @@ const Settings = () => {
 		},
 	});
 
+	const unsubscribeMembershipMutation = useMutation({
+		mutationFn: handleUnsubscribeMembershipAPI,
+	});
+
 	const handleDeleteAccount = () => {
 		deleteAccountMutation.mutate();
+	};
+
+	const handleUnsubscribeMembership = () => {
+		unsubscribeMembershipMutation.mutate();
 	};
 
 	const isMemberPro = userProfile?.membership === "PRO";
@@ -152,10 +161,19 @@ const Settings = () => {
 					{loadStripeForm && (
 						<Button onClick={() => setLoadStripeForm(false)}>Cancel</Button>
 					)}
-					<>
-						<p>Membership Tier: {userProfile?.membership}</p>
-						<p>Valid until:</p>
-					</>
+					{isMemberPro && (
+						<>
+							<p>Membership Tier: {userProfile?.membership}</p>
+							<p>Valid until:</p>
+							<Button
+								type='button'
+								variant='secondary'
+								onClick={handleUnsubscribeMembership}
+							>
+								Unsubscribe
+							</Button>
+						</>
+					)}
 				</section>
 
 				<section>
